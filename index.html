@@ -248,7 +248,10 @@
   </style>
   <script>
     window.codeQuestMaintenanceEnd = Date.parse("2026-11-24T21:40:00+05:30");
-    if (window.location.protocol !== "file:" && Date.now() < window.codeQuestMaintenanceEnd) {
+    const isLocalPreview = window.location.protocol === "file:"
+      || window.location.hostname === "localhost"
+      || window.location.hostname.endsWith(".localhost");
+    if (!isLocalPreview && Date.now() < window.codeQuestMaintenanceEnd) {
       document.documentElement.classList.add("maintenance-mode");
     }
   </script>
@@ -348,6 +351,12 @@
           <div class="terminal-help">
             <span class="terminal-help-label" id="terminal-try-label">Try a command:</span>
             <button class="terminal-chip" type="button" data-terminal-command="help">help</button>
+            <button class="terminal-chip" type="button" data-terminal-command="guide">guide</button>
+            <button class="terminal-chip" type="button" data-terminal-command="languages">languages</button>
+            <button class="terminal-chip" type="button" data-terminal-command="script python">script python</button>
+            <button class="terminal-chip" type="button" data-terminal-command="script javascript">script javascript</button>
+            <button class="terminal-chip" type="button" data-terminal-command="script c++">script c++</button>
+            <button class="terminal-chip" type="button" data-terminal-command="run javascript">run javascript</button>
             <button class="terminal-chip" type="button" data-terminal-command="ls">ls</button>
             <button class="terminal-chip" type="button" data-terminal-command="python hello.py">python hello.py</button>
           </div>
@@ -1243,14 +1252,20 @@
         terminalDescription: "Practice a few simple computer commands. You can’t change files or settings on your laptop here.",
         terminalBarLabel: "Safe practice terminal", terminalWelcome: "Welcome, Himesh! Type help to see what you can try.",
         terminalPlaceholder: "Type a command, like help", terminalInputLabel: "Type a practice command", terminalRun: "Run",
-        terminalTryLabel: "Try a command:", terminalSafety: "Practice simulator only — commands run here in the lesson, not on your computer.",
-        terminalOutputLabel: "Terminal output", terminalHelp: "Available commands:\nhelp — show this list\nclear — clear the screen\nwhoami — show the practice user\npwd — show the practice folder\nls — list practice files\ncat README.txt — read the practice note\necho TEXT — print your text\npython hello.py — run a sample Python script",
+        terminalTryLabel: "Try a command:", terminalSafety: "Practice simulator only — it shows examples; it does not save files or run code on your computer.",
+        terminalOutputLabel: "Terminal output", terminalHelp: "Available commands:\nhelp — show this list\nguide or tips — learn what to do first\nlanguages — see common languages\nscript <language> — see a starter script\nrun <language> — simulate a starter script\nclear — clear the screen\nwhoami — show the practice user\npwd — show the practice folder\nls — list practice files\ncat README.txt — read the practice note\necho TEXT — print your text\npython hello.py — simulate a Python script",
+        terminalGuide: "How to start:\n1. Pick one tiny goal, like showing Hello.\n2. Choose one language; you do not need to learn them all at once. Type languages if unsure.\n3. Type script python, script javascript, or script c++ to see a starter example.\n4. Copy the code into Notepad or another text editor. Save it with the shown name, such as hello.py. In Notepad, choose Save as type: All files so it does not add .txt.\n5. To run a real file, you need Python for .py, Node.js for .js, or a C++ compiler for .cpp. Ask for setup steps when you are ready.\n6. Try run python, run javascript, or run c++ here. Those show pretend output only; this website does not save or compile files.\n7. If confused, type help. Try one small change at a time.",
+        terminalLanguages: "Common languages (there are many more):\nPython — first scripts, automation, and data\nJavaScript — websites and interactive apps\nC++ — fast programs, games, and performance\nJava, C# — apps and games\nHTML + CSS — web page content and design\nTypeScript — JavaScript with extra checks\nC, Go, Rust — systems and server tools\nSwift, Kotlin, Dart — phone apps\nSQL — database information\nPHP, Ruby — websites and server code\nBash, Lua — small scripts and tools\nR — statistics and charts\nStart with ONE: Python for first scripts, JavaScript for websites.",
+        terminalScriptHint: "Type script followed by a language in the languages list. For example: script javascript or script c++.",
+        terminalScriptMissing: "I do not have a sample for that language yet. Type languages to see common choices, or try script followed by one of those names.",
+        terminalRunHint: "Try: run python, run javascript, or run c++. These only show pretend output.",
+        terminalScriptFile: "Example file name", terminalScriptMeaning: "What the code does",
+        terminalSimulated: "[Practice simulation — this code did not really run]",
         terminalUnknown: "That command isn’t in this practice terminal. Type help to see commands.",
         terminalFileMissing: "That file isn’t here. Type ls to see practice files.",
         terminalReadme: "This is a pretend practice folder. You are learning one command at a time.",
         terminalUser: "himesh (practice user)", terminalWorkingFolder: "/home/himesh/coding-quest",
         terminalPythonHelp: "Try: python hello.py",
-        lessonComplete: "Lesson complete", lessonTime: "About 2 minutes", example: "A tiny example", breakdownTitle: "What each part means",
         lessonComplete: "Lesson complete", lessonTime: "About 2 minutes", example: "A tiny example", breakdownTitle: "What each part means",
         walkthroughTitle: "▶️ Run the code one line at a time", runLineOne: "Run line 1", runLineTwo: "Run line 2", scoreLabel: "Current score", lineOneExplain: "Make a named box called score and put 1 in it.", lineTwoExplain: "Take the old score (1), add 1, and save the new value.", startWalkthrough: "Start with line 1. The score will be 1.", lineOneDone: "Line 1 ran: score now holds 1. Now run line 2.", lineTwoDone: "Line 2 used the old 1, added 1, and saved 2.",
         scriptWalkthroughTitle: "▶️ Make and run your first script", scriptFileExplain: "A script is code saved in a file. The `.py` ending means it is a Python file.", scriptLineOneExplain: "Tell Python to show Hello, Himesh! on the screen.", scriptLineTwoExplain: "Tell Python to show another message on the next line.", scriptOutputTitle: "What the script shows", scriptOutputStart: "Run line 1 to see what the script displays.", scriptLineOneDone: "Line 1 ran. Now run line 2.", scriptLineTwoDone: "Great! Your two-line script ran in order.",
@@ -1289,14 +1304,20 @@
         terminalDescription: "Computer ke kuch aasaan commands yahan practice karo. Isse laptop ki files ya settings nahi badalengi.",
         terminalBarLabel: "Safe practice terminal", terminalWelcome: "Welcome Himesh! Kya try kar sakte ho dekhne ke liye help type karo.",
         terminalPlaceholder: "Jaise help, koi command likho", terminalInputLabel: "Practice command yahan likho", terminalRun: "Chalao",
-        terminalTryLabel: "Yeh command try karo:", terminalSafety: "Yeh sirf practice simulator hai — commands yahin lesson mein chalti hain, laptop par nahi.",
-        terminalOutputLabel: "Terminal ka output", terminalHelp: "Available commands:\nhelp — yeh list dekho\nclear — screen saaf karo\nwhoami — practice user dekho\npwd — practice folder dekho\nls — practice files dekho\ncat README.txt — practice note padho\necho TEXT — apna text dikhao\npython hello.py — sample Python script chalao",
+        terminalTryLabel: "Yeh command try karo:", terminalSafety: "Yeh sirf simulator hai — example dikhata hai, file save ya laptop par code run nahi karta.",
+        terminalOutputLabel: "Terminal ka output", terminalHelp: "Available commands:\nhelp — yeh list dekho\nguide ya tips — pehle kya karna hai seekho\nlanguages — aam languages dekho\nscript <language> — starter script dekho\nrun <language> — script ka nakli output dekho\nclear — screen saaf karo\nwhoami — practice user dekho\npwd — practice folder dekho\nls — practice files dekho\ncat README.txt — practice note padho\necho TEXT — apna text dikhao\npython hello.py — Python script ka nakli output dekho",
+        terminalGuide: "Kaise shuru karein:\n1. Ek chhota goal chuno, jaise Hello dikhana.\n2. Ek language chuno; sabko ek saath seekhne ki zaroorat nahi. Confuse ho toh languages type karo.\n3. Starter example dekhne ke liye script python, script javascript, ya script c++ likho.\n4. Code ko Notepad ya text editor mein copy karo. Dikhaye gaye naam se save karo, jaise hello.py. Notepad mein Save as type: All files chuno, taaki .txt na jude.\n5. Asli file chalane ke liye .py par Python, .js par Node.js, ya .cpp par C++ compiler chahiye. Ready ho toh setup ke steps pooch lena.\n6. Yahan run python, run javascript, ya run c++ try karo. Yeh sirf nakli output dikhate hain; website file save ya compile nahi karti.\n7. Samajh na aaye toh help type karo. Ek baar mein ek chhota change try karo.",
+        terminalLanguages: "Aam languages (bahut si aur bhi hain):\nPython — pehli scripts, automation aur data\nJavaScript — websites aur interactive apps\nC++ — fast programs, games aur performance\nJava, C# — apps aur games\nHTML + CSS — web page ka content aur design\nTypeScript — extra checks wala JavaScript\nC, Go, Rust — system aur server tools\nSwift, Kotlin, Dart — phone apps\nSQL — database ki jaankari\nPHP, Ruby — websites aur server code\nBash, Lua — chhoti scripts aur tools\nR — statistics aur charts\nEk se shuru karo: pehli script ke liye Python, website ke liye JavaScript.",
+        terminalScriptHint: "Languages list mein se ek naam ke saath script likho. Jaise: script javascript ya script c++.",
+        terminalScriptMissing: "Is language ka sample nahi hai. Aam choices dekhne ke liye languages type karo, phir script aur uska naam likho.",
+        terminalRunHint: "Try karo: run python, run javascript, ya run c++. Yeh sirf nakli output dikhate hain.",
+        terminalScriptFile: "Example file ka naam", terminalScriptMeaning: "Code kya karta hai",
+        terminalSimulated: "[Practice simulation — code sach mein nahi chala]",
         terminalUnknown: "Yeh command practice terminal mein nahi hai. Commands dekhne ke liye help type karo.",
         terminalFileMissing: "Yeh file yahan nahi hai. Practice files dekhne ke liye ls type karo.",
         terminalReadme: "Yeh practice ke liye banaya gaya nakli folder hai. Tum ek-ek command seekh rahe ho.",
         terminalUser: "himesh (practice user)", terminalWorkingFolder: "/home/himesh/coding-quest",
         terminalPythonHelp: "Yeh try karo: python hello.py",
-        lessonComplete: "Lesson complete", lessonTime: "Lagbhag 2 minute", example: "Chhota sa example", breakdownTitle: "Har part ka kya matlab hai",
         lessonComplete: "Lesson complete", lessonTime: "Lagbhag 2 minute", example: "Chhota sa example", breakdownTitle: "Har part ka kya matlab hai",
         walkthroughTitle: "▶️ Code ko ek-ek line chalao", runLineOne: "Line 1 chalao", runLineTwo: "Line 2 chalao", scoreLabel: "Abhi score", lineOneExplain: "`score` naam ka box banao aur usmein 1 rakho.", lineTwoExplain: "Purana score (1) lo, usmein 1 jodo, aur naya number save karo.", startWalkthrough: "Pehle line 1 chalao. Score 1 ho jaayega.", lineOneDone: "Line 1 chali: score ab 1 hai. Ab line 2 chalao.", lineTwoDone: "Line 2 ne purana 1 liya, usmein 1 joda aur 2 save kiya.",
         scriptWalkthroughTitle: "▶️ Apni pehli script banao aur chalao", scriptFileExplain: "Script code ki saved file hoti hai. `.py` se pata chalta hai ki yeh Python file hai.", scriptLineOneExplain: "Python ko screen par Hello, Himesh! dikhane ko kaho.", scriptLineTwoExplain: "Python ko agli line par ek aur message dikhane ko kaho.", scriptOutputTitle: "Script screen par kya dikhati hai", scriptOutputStart: "Script kya dikhati hai dekhne ke liye line 1 chalao.", scriptLineOneDone: "Line 1 chal gayi. Ab line 2 chalao.", scriptLineTwoDone: "Bahut badhiya! Tumhari do-line script sahi order mein chali.",
@@ -1753,6 +1774,202 @@
       document.getElementById("section-description").textContent = selectedLevelDescription;
     }
 
+    const terminalScriptSamples = {
+      python: {
+        file: "hello.py",
+        code: ['print("Hello, Himesh!")'],
+        meaning: {
+          en: "print() tells Python to show the message.",
+          hinglish: "print() Python ko message dikhane ko bolta hai."
+        }
+      },
+      javascript: {
+        file: "hello.js",
+        code: ['console.log("Hello, Himesh!");'],
+        meaning: {
+          en: "console.log() shows a message in the browser or terminal.",
+          hinglish: "console.log() browser ya terminal mein message dikhata hai."
+        }
+      },
+      cpp: {
+        file: "hello.cpp",
+        code: [
+          "#include <iostream>",
+          "int main() {",
+          '  std::cout << "Hello, Himesh!" << std::endl;',
+          "  return 0;",
+          "}"
+        ],
+        meaning: {
+          en: "main() is where the program starts. std::cout shows the message.",
+          hinglish: "main() se program shuru hota hai. std::cout message dikhata hai."
+        }
+      },
+      java: {
+        file: "Hello.java",
+        code: [
+          "class Hello {",
+          "  public static void main(String[] args) {",
+          '    System.out.println("Hello, Himesh!");',
+          "  }",
+          "}"
+        ],
+        meaning: {
+          en: "main() starts the program. println() shows the message.",
+          hinglish: "main() program shuru karta hai. println() message dikhata hai."
+        }
+      },
+      csharp: {
+        file: "Program.cs",
+        code: ['Console.WriteLine("Hello, Himesh!");'],
+        meaning: {
+          en: "Console.WriteLine() shows a message in a C# program.",
+          hinglish: "Console.WriteLine() C# program mein message dikhata hai."
+        }
+      },
+      html: {
+        file: "index.html",
+        code: ["<h1>Hello, Himesh!</h1>"],
+        meaning: {
+          en: "<h1> marks a main heading. A browser displays it on a web page.",
+          hinglish: "<h1> main heading ka label hai. Browser ise web page par dikhata hai."
+        }
+      },
+      css: {
+        file: "style.css",
+        code: ["h1 {", "  color: green;", "}"],
+        meaning: {
+          en: "CSS changes how a web page looks. This makes the heading green.",
+          hinglish: "CSS web page ka look badalta hai. Isse heading green hoti hai."
+        }
+      },
+      typescript: {
+        file: "hello.ts",
+        code: ['const message: string = "Hello, Himesh!";', "console.log(message);"],
+        meaning: {
+          en: "const saves a value. string says the value is text.",
+          hinglish: "const value save karta hai. string batata hai ki value text hai."
+        }
+      },
+      c: {
+        file: "hello.c",
+        code: [
+          "#include <stdio.h>",
+          "int main(void) {",
+          '  printf("Hello, Himesh!");',
+          "  return 0;",
+          "}"
+        ],
+        meaning: {
+          en: "main() starts the program. printf() shows the message.",
+          hinglish: "main() program shuru karta hai. printf() message dikhata hai."
+        }
+      },
+      go: {
+        file: "hello.go",
+        code: ['package main', 'import "fmt"', "func main() {", '  fmt.Println("Hello, Himesh!")', "}"],
+        meaning: {
+          en: "main() starts the program. Println() shows the message.",
+          hinglish: "main() program shuru karta hai. Println() message dikhata hai."
+        }
+      },
+      rust: {
+        file: "hello.rs",
+        code: ["fn main() {", '  println!("Hello, Himesh!");', "}"],
+        meaning: {
+          en: "main() starts the program. println! prints the message.",
+          hinglish: "main() program shuru karta hai. println! message dikhata hai."
+        }
+      },
+      swift: {
+        file: "hello.swift",
+        code: ['print("Hello, Himesh!")'],
+        meaning: {
+          en: "print() shows text in a Swift program.",
+          hinglish: "print() Swift program mein text dikhata hai."
+        }
+      },
+      kotlin: {
+        file: "Hello.kt",
+        code: ["fun main() {", '  println("Hello, Himesh!")', "}"],
+        meaning: {
+          en: "main() starts the program. println() shows the message.",
+          hinglish: "main() program shuru karta hai. println() message dikhata hai."
+        }
+      },
+      php: {
+        file: "hello.php",
+        code: ['<?php echo "Hello, Himesh!"; ?>'],
+        meaning: {
+          en: "echo tells PHP to show the message.",
+          hinglish: "echo PHP ko message dikhane ko bolta hai."
+        }
+      },
+      ruby: {
+        file: "hello.rb",
+        code: ['puts "Hello, Himesh!"'],
+        meaning: {
+          en: "puts shows a line of text in Ruby.",
+          hinglish: "puts Ruby mein text ki ek line dikhata hai."
+        }
+      },
+      dart: {
+        file: "hello.dart",
+        code: ["void main() {", '  print("Hello, Himesh!");', "}"],
+        meaning: {
+          en: "main() starts the program. print() shows the message.",
+          hinglish: "main() program shuru karta hai. print() message dikhata hai."
+        }
+      },
+      lua: {
+        file: "hello.lua",
+        code: ['print("Hello, Himesh!")'],
+        meaning: {
+          en: "print() shows text in Lua.",
+          hinglish: "print() Lua mein text dikhata hai."
+        }
+      },
+      r: {
+        file: "hello.R",
+        code: ['print("Hello, Himesh!")'],
+        meaning: {
+          en: "print() shows text in R, a language often used for statistics.",
+          hinglish: "print() R mein text dikhata hai. R statistics ke kaam aati hai."
+        }
+      },
+      bash: {
+        file: "hello.sh",
+        code: ['echo "Hello, Himesh!"'],
+        meaning: {
+          en: "echo prints text in a command terminal.",
+          hinglish: "echo command terminal mein text dikhata hai."
+        }
+      },
+      sql: {
+        file: "hello.sql",
+        code: ["SELECT 'Hello, Himesh!';"],
+        meaning: {
+          en: "SELECT asks a database to return a value.",
+          hinglish: "SELECT database se ek value dikhane ko kehta hai."
+        }
+      }
+    };
+
+    const terminalLanguageAliases = {
+      python: "python", py: "python",
+      javascript: "javascript", js: "javascript", node: "javascript",
+      "c++": "cpp", cpp: "cpp",
+      java: "java",
+      "c#": "csharp", csharp: "csharp",
+      html: "html", css: "css",
+      typescript: "typescript", ts: "typescript",
+      c: "c",
+      go: "go", rust: "rust", swift: "swift", kotlin: "kotlin",
+      php: "php", ruby: "ruby", dart: "dart", lua: "lua", r: "r",
+      bash: "bash", shell: "bash",
+      sql: "sql"
+    };
+
     function printTerminalLine(text, className = "") {
       const output = document.getElementById("terminal-output");
       const line = document.createElement("div");
@@ -1779,17 +1996,39 @@
       let result;
 
       if (normalized === "help") result = ui.terminalHelp.split("\n");
+      else if (normalized === "guide" || normalized === "tips") result = ui.terminalGuide.split("\n");
+      else if (normalized === "languages") result = ui.terminalLanguages.split("\n");
       else if (normalized === "whoami") result = [ui.terminalUser];
       else if (normalized === "pwd") result = [ui.terminalWorkingFolder];
       else if (normalized === "ls") result = ["README.txt   hello.py"];
       else if (normalized === "cat readme.txt") result = [ui.terminalReadme];
       else if (normalized === "cat" || normalized.startsWith("cat ")) result = [ui.terminalFileMissing];
       else if (/^echo(?:\s|$)/i.test(command)) result = [command.replace(/^echo(?:\s+|$)/i, "")];
-      else if (/^(python|python3)(?:\s|$)/i.test(command)) {
+      else if (/^script(?:\s|$)/i.test(command)) {
+        const requestedLanguage = normalized.replace(/^script\s*/, "");
+        if (!requestedLanguage) {
+          result = [ui.terminalScriptHint];
+        } else {
+          const sample = terminalScriptSamples[terminalLanguageAliases[requestedLanguage]];
+          result = sample
+            ? [`${ui.terminalScriptFile}: ${sample.file}`, ...sample.code, `${ui.terminalScriptMeaning}: ${sample.meaning[language]}`]
+            : [ui.terminalScriptMissing, ui.terminalScriptHint];
+        }
+      } else if (/^run(?:\s|$)/i.test(command)) {
+        const requestedLanguage = normalized.replace(/^run\s*/, "");
+        const languageName = terminalLanguageAliases[requestedLanguage];
+        if (languageName === "python" || languageName === "javascript" || languageName === "cpp") {
+          result = [ui.terminalSimulated, "Hello, Himesh!", ...(languageName === "python" ? ["I am learning Python."] : [])];
+        } else {
+          result = [ui.terminalRunHint];
+        }
+      } else if (/^(python|python3)(?:\s|$)/i.test(command)) {
         const script = command.replace(/^\S+\s*/, "").trim().toLowerCase();
         result = script === "hello.py"
-          ? ["Hello, Himesh!", "I am learning Python."]
+          ? [ui.terminalSimulated, "Hello, Himesh!", "I am learning Python."]
           : [ui.terminalPythonHelp];
+      } else if (/^node\s+hello\.js$/i.test(command)) {
+        result = [ui.terminalSimulated, "Hello, Himesh!"];
       } else result = [ui.terminalUnknown];
 
       result.forEach((line) => printTerminalLine(line));
