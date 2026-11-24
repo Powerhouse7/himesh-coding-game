@@ -183,6 +183,7 @@
     .terminal-heading { margin: 0 2px 12px; }
     .terminal-heading h2 { margin: 0; font-size: 20px; letter-spacing: -.6px; }
     .terminal-heading p { margin: 5px 0 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+    .terminal-workbench { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(210px, .8fr); gap: 13px; align-items: start; }
     .terminal-card { overflow: hidden; color: #e8f4ec; background: #182b36; border-radius: 16px; box-shadow: var(--shadow); }
     .terminal-bar { display: flex; align-items: center; gap: 9px; padding: 11px 14px; color: #afc0c5; border-bottom: 1px solid rgba(255,255,255,.1); font-size: 11px; }
     .terminal-bar .dots { margin-right: 3px; }
@@ -232,6 +233,19 @@
     .terminal-chip { padding: 5px 8px; color: #355a83; background: #e8f2ff; border: 1px solid #d5e6f8; border-radius: 7px; cursor: pointer; font: 11px ui-monospace, SFMono-Regular, Consolas, monospace; }
     .terminal-chip:hover { background: #dcecff; }
     .terminal-safety { margin: 8px 1px 0; }
+    .terminal-tips-panel { padding: 15px; background: white; border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); }
+    .terminal-tips-panel h3 { margin: 0 0 5px; font-size: 14px; }
+    .terminal-tips-intro { margin: 0 0 12px; color: var(--muted); font-size: 10px; line-height: 1.55; }
+    .terminal-tip-steps { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; counter-reset: terminal-tip; }
+    .terminal-tip-steps li { display: grid; grid-template-columns: 22px 1fr; gap: 8px; align-items: start; color: #66757a; font-size: 10px; line-height: 1.5; counter-increment: terminal-tip; }
+    .terminal-tip-steps li:before { content: counter(terminal-tip); display: grid; place-items: center; width: 21px; height: 21px; color: #355a83; background: #e8f2ff; border-radius: 7px; font-size: 10px; font-weight: 850; }
+    .terminal-tip-steps strong { display: block; margin-bottom: 2px; color: var(--ink); font-size: 10px; }
+    .terminal-categories-title { margin: 14px 0 8px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 11px; }
+    .terminal-categories { display: grid; gap: 7px; }
+    .terminal-category { padding: 8px 9px; background: #f7f9f5; border-radius: 9px; }
+    .terminal-category strong { display: block; margin-bottom: 3px; color: #304b29; font-size: 10px; }
+    .terminal-category p { margin: 0; color: #66757a; font-size: 9px; line-height: 1.45; }
+    .terminal-tips-note { margin: 10px 0 0; padding: 9px; color: #557a45; background: #f1f8ed; border-radius: 9px; font-size: 9px; line-height: 1.55; }
     .bottom-note { margin: 21px 0 0; text-align: center; color: #86928e; font-size: 10px; }
     .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 
@@ -275,6 +289,9 @@
       .top-right .streak { display: none; }
       .lesson-footer { align-items: flex-start; flex-direction: column; }
       .next-button { align-self: flex-end; }
+    }
+    @media (max-width: 520px) {
+      .terminal-workbench { grid-template-columns: 1fr; }
     }
   </style>
   <script>
@@ -368,6 +385,7 @@
             <h2 id="terminal-title">🖥 Terminal playground</h2>
             <p id="terminal-description">Practice a few simple computer commands. You can’t change files or settings on your laptop here.</p>
           </div>
+          <div class="terminal-workbench">
           <div class="terminal-card">
             <div class="terminal-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span id="terminal-bar-label">Safe practice terminal</span></div>
             <section class="terminal-code-demo" aria-labelledby="terminal-demo-title">
@@ -403,6 +421,26 @@
               <input class="terminal-input" id="terminal-command" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type a command, like help" aria-label="Type a practice command">
               <button class="terminal-run" id="terminal-run" type="submit">Run</button>
             </form>
+          </div>
+          <aside class="terminal-tips-panel" aria-labelledby="terminal-tips-title">
+            <h3 id="terminal-tips-title">🧭 What should I do first?</h3>
+            <p class="terminal-tips-intro" id="terminal-tips-intro">No experience needed. Follow one small step at a time.</p>
+            <ol class="terminal-tip-steps">
+              <li><div><strong id="terminal-tip-one-title">Choose one small goal</strong><span id="terminal-tip-one">For example: show a greeting on screen.</span></div></li>
+              <li><div><strong id="terminal-tip-two-title">Choose one language</strong><span id="terminal-tip-two">Use the groups below. Start with Python or JavaScript.</span></div></li>
+              <li><div><strong id="terminal-tip-three-title">Look at the example</strong><span id="terminal-tip-three">Copy a starter with script javascript or script python.</span></div></li>
+              <li><div><strong id="terminal-tip-four-title">Change one thing</strong><span id="terminal-tip-four">Change the name above, press Run, and read the output.</span></div></li>
+              <li><div><strong id="terminal-tip-five-title">When stuck</strong><span id="terminal-tip-five">Type guide for steps or help for commands.</span></div></li>
+            </ol>
+            <h4 class="terminal-categories-title" id="terminal-categories-title">Language categories</h4>
+            <div class="terminal-categories">
+              <div class="terminal-category"><strong id="terminal-category-web-title">🌐 Websites</strong><p id="terminal-category-web">HTML, CSS, JavaScript, TypeScript, PHP, Ruby</p></div>
+              <div class="terminal-category"><strong id="terminal-category-scripts-title">🧩 First scripts & automation</strong><p id="terminal-category-scripts">Python, Bash, Lua</p></div>
+              <div class="terminal-category"><strong id="terminal-category-apps-title">🎮 Apps & games</strong><p id="terminal-category-apps">C++, C#, Java, Swift, Kotlin, Dart</p></div>
+              <div class="terminal-category"><strong id="terminal-category-systems-title">⚙️ Systems, servers & data</strong><p id="terminal-category-systems">C, Go, Rust, SQL, R</p></div>
+            </div>
+            <p class="terminal-tips-note" id="terminal-tips-note">There are many more languages. Learn one at a time; no one needs to learn them all.</p>
+          </aside>
           </div>
           <div class="terminal-help">
             <span class="terminal-help-label" id="terminal-try-label">Try a command:</span>
@@ -1311,7 +1349,7 @@
         terminalTryLabel: "Try a command:", terminalSafety: "Practice simulator only — it shows examples; it does not save files or run code on your computer.",
         terminalOutputLabel: "Terminal output", terminalHelp: "Available commands:\nhelp — show this list\nguide or tips — learn what to do first\nlanguages — see common languages\nscript <language> — see a starter script\nrun <language> — simulate a starter script\nclear — clear the screen\nwhoami — show the practice user\npwd — show the practice folder\nls — list practice files\ncat README.txt — read the practice note\necho TEXT — print your text\npython hello.py — simulate a Python script",
         terminalGuide: "How to start:\n1. Pick one tiny goal, like showing Hello.\n2. Choose one language; you do not need to learn them all at once. Type languages if unsure.\n3. Type script python, script javascript, or script c++ to see a starter example.\n4. Copy the code into Notepad or another text editor. Save it with the shown name, such as hello.py. In Notepad, choose Save as type: All files so it does not add .txt.\n5. To run a real file, you need Python for .py, Node.js for .js, or a C++ compiler for .cpp. Ask for setup steps when you are ready.\n6. Try run python, run javascript, or run c++ here. Those show pretend output only; this website does not save or compile files.\n7. If confused, type help. Try one small change at a time.",
-        terminalLanguages: "Common languages (there are many more):\nPython — first scripts, automation, and data\nJavaScript — websites and interactive apps\nC++ — fast programs, games, and performance\nJava, C# — apps and games\nHTML + CSS — web page content and design\nTypeScript — JavaScript with extra checks\nC, Go, Rust — systems and server tools\nSwift, Kotlin, Dart — phone apps\nSQL — database information\nPHP, Ruby — websites and server code\nBash, Lua — small scripts and tools\nR — statistics and charts\nStart with ONE: Python for first scripts, JavaScript for websites.",
+        terminalLanguages: "WEBSITES:\nHTML — page structure\nCSS — page appearance\nJavaScript — page actions and interactive apps\nTypeScript — JavaScript with extra checks\nPHP, Ruby — websites and server code\nFIRST SCRIPTS & AUTOMATION:\nPython — first scripts, data, and automation\nBash, Lua — small scripts and tools\nAPPS & GAMES:\nC++, C#, Java — apps and games\nSwift, Kotlin, Dart — phone apps\nSYSTEMS, SERVERS & DATA:\nC, Go, Rust — systems and server tools\nSQL — database information\nR — statistics and charts\nThere are many more languages. Start with ONE: Python for first scripts, JavaScript for websites.",
         terminalScriptHint: "Type script followed by a language in the languages list. For example: script javascript or script c++.",
         terminalScriptMissing: "I do not have a sample for that language yet. Type languages to see common choices, or try script followed by one of those names.",
         terminalRunHint: "Try: run python, run javascript, or run c++. These only show pretend output.",
@@ -1325,6 +1363,19 @@
         terminalDemoNameLabel: "Try a name:", terminalDemoRun: "Run example",
         terminalDemoPlaceholder: "Change the name above and press Run example.",
         terminalDemoOutputLabel: "Output", terminalDemoDefaultName: "friend",
+        terminalTipsTitle: "🧭 What should I do first?",
+        terminalTipsIntro: "No experience needed. Follow one small step at a time.",
+        terminalTipOneTitle: "Choose one small goal", terminalTipOne: "For example: show a greeting on screen.",
+        terminalTipTwoTitle: "Choose one language", terminalTipTwo: "Use the groups below. Start with Python or JavaScript.",
+        terminalTipThreeTitle: "Look at the example", terminalTipThree: "Type script javascript or script python to see starter code.",
+        terminalTipFourTitle: "Change one thing", terminalTipFour: "Change the name above, press Run, and read the output.",
+        terminalTipFiveTitle: "When stuck", terminalTipFive: "Type guide for steps or help for commands.",
+        terminalCategoriesTitle: "Language categories",
+        terminalCategoryWebTitle: "🌐 Websites", terminalCategoryWeb: "HTML, CSS, JavaScript, TypeScript, PHP, Ruby",
+        terminalCategoryScriptsTitle: "🧩 First scripts & automation", terminalCategoryScripts: "Python, Bash, Lua",
+        terminalCategoryAppsTitle: "🎮 Apps & games", terminalCategoryApps: "C++, C#, Java, Swift, Kotlin, Dart",
+        terminalCategorySystemsTitle: "⚙️ Systems, servers & data", terminalCategorySystems: "C, Go, Rust, SQL, R",
+        terminalTipsNote: "There are many more languages. Learn one at a time; no one needs to learn them all.",
         terminalUnknown: "That command isn’t in this practice terminal. Type help to see commands.",
         terminalFileMissing: "That file isn’t here. Type ls to see practice files.",
         terminalReadme: "This is a pretend practice folder. You are learning one command at a time.",
@@ -1371,7 +1422,7 @@
         terminalTryLabel: "Yeh command try karo:", terminalSafety: "Yeh sirf simulator hai — example dikhata hai, file save ya laptop par code run nahi karta.",
         terminalOutputLabel: "Terminal ka output", terminalHelp: "Available commands:\nhelp — yeh list dekho\nguide ya tips — pehle kya karna hai seekho\nlanguages — aam languages dekho\nscript <language> — starter script dekho\nrun <language> — script ka nakli output dekho\nclear — screen saaf karo\nwhoami — practice user dekho\npwd — practice folder dekho\nls — practice files dekho\ncat README.txt — practice note padho\necho TEXT — apna text dikhao\npython hello.py — Python script ka nakli output dekho",
         terminalGuide: "Kaise shuru karein:\n1. Ek chhota goal chuno, jaise Hello dikhana.\n2. Ek language chuno; sabko ek saath seekhne ki zaroorat nahi. Confuse ho toh languages type karo.\n3. Starter example dekhne ke liye script python, script javascript, ya script c++ likho.\n4. Code ko Notepad ya text editor mein copy karo. Dikhaye gaye naam se save karo, jaise hello.py. Notepad mein Save as type: All files chuno, taaki .txt na jude.\n5. Asli file chalane ke liye .py par Python, .js par Node.js, ya .cpp par C++ compiler chahiye. Ready ho toh setup ke steps pooch lena.\n6. Yahan run python, run javascript, ya run c++ try karo. Yeh sirf nakli output dikhate hain; website file save ya compile nahi karti.\n7. Samajh na aaye toh help type karo. Ek baar mein ek chhota change try karo.",
-        terminalLanguages: "Aam languages (bahut si aur bhi hain):\nPython — pehli scripts, automation aur data\nJavaScript — websites aur interactive apps\nC++ — fast programs, games aur performance\nJava, C# — apps aur games\nHTML + CSS — web page ka content aur design\nTypeScript — extra checks wala JavaScript\nC, Go, Rust — system aur server tools\nSwift, Kotlin, Dart — phone apps\nSQL — database ki jaankari\nPHP, Ruby — websites aur server code\nBash, Lua — chhoti scripts aur tools\nR — statistics aur charts\nEk se shuru karo: pehli script ke liye Python, website ke liye JavaScript.",
+        terminalLanguages: "WEBSITES:\nHTML — page ka structure\nCSS — page ka design\nJavaScript — page ke actions aur interactive apps\nTypeScript — extra checks wala JavaScript\nPHP, Ruby — websites aur server code\nFIRST SCRIPTS & AUTOMATION:\nPython — pehli scripts, data aur automation\nBash, Lua — chhoti scripts aur tools\nAPPS & GAMES:\nC++, C#, Java — apps aur games\nSwift, Kotlin, Dart — phone apps\nSYSTEMS, SERVERS & DATA:\nC, Go, Rust — system aur server tools\nSQL — database ki jaankari\nR — statistics aur charts\nBahut si aur languages bhi hain. Ek se shuru karo: pehli script ke liye Python, website ke liye JavaScript.",
         terminalScriptHint: "Languages list mein se ek naam ke saath script likho. Jaise: script javascript ya script c++.",
         terminalScriptMissing: "Is language ka sample nahi hai. Aam choices dekhne ke liye languages type karo, phir script aur uska naam likho.",
         terminalRunHint: "Try karo: run python, run javascript, ya run c++. Yeh sirf nakli output dikhate hain.",
@@ -1385,6 +1436,19 @@
         terminalDemoNameLabel: "Naam try karo:", terminalDemoRun: "Example chalao",
         terminalDemoPlaceholder: "Upar naam badlo aur Example chalao dabao.",
         terminalDemoOutputLabel: "Output", terminalDemoDefaultName: "dost",
+        terminalTipsTitle: "🧭 Pehle kya karna chahiye?",
+        terminalTipsIntro: "Pehle se kuch aana zaroori nahi. Ek chhota step ek baar mein karo.",
+        terminalTipOneTitle: "Ek chhota goal chuno", terminalTipOne: "Jaise: screen par greeting dikhana.",
+        terminalTipTwoTitle: "Ek language chuno", terminalTipTwo: "Neeche groups dekho. Python ya JavaScript se shuru karo.",
+        terminalTipThreeTitle: "Example dekho", terminalTipThree: "Starter code ke liye script javascript ya script python likho.",
+        terminalTipFourTitle: "Ek cheez badlo", terminalTipFour: "Upar naam badlo, Run dabao, phir output padho.",
+        terminalTipFiveTitle: "Atak jao toh", terminalTipFive: "Steps ke liye guide, commands ke liye help likho.",
+        terminalCategoriesTitle: "Language ke groups",
+        terminalCategoryWebTitle: "🌐 Websites", terminalCategoryWeb: "HTML, CSS, JavaScript, TypeScript, PHP, Ruby",
+        terminalCategoryScriptsTitle: "🧩 Pehli scripts aur automation", terminalCategoryScripts: "Python, Bash, Lua",
+        terminalCategoryAppsTitle: "🎮 Apps aur games", terminalCategoryApps: "C++, C#, Java, Swift, Kotlin, Dart",
+        terminalCategorySystemsTitle: "⚙️ Systems, servers aur data", terminalCategorySystems: "C, Go, Rust, SQL, R",
+        terminalTipsNote: "Bahut si aur languages bhi hain. Ek-ek karke seekho; sabko seekhna zaroori nahi.",
         terminalUnknown: "Yeh command practice terminal mein nahi hai. Commands dekhne ke liye help type karo.",
         terminalFileMissing: "Yeh file yahan nahi hai. Practice files dekhne ke liye ls type karo.",
         terminalReadme: "Yeh practice ke liye banaya gaya nakli folder hai. Tum ek-ek command seekh rahe ho.",
@@ -2241,6 +2305,28 @@
       document.getElementById("terminal-demo-name-label").textContent = ui.terminalDemoNameLabel;
       document.getElementById("terminal-demo-run").textContent = ui.terminalDemoRun;
       renderGreetingDemoOutput();
+      document.getElementById("terminal-tips-title").textContent = ui.terminalTipsTitle;
+      document.getElementById("terminal-tips-intro").textContent = ui.terminalTipsIntro;
+      document.getElementById("terminal-tip-one-title").textContent = ui.terminalTipOneTitle;
+      document.getElementById("terminal-tip-one").textContent = ui.terminalTipOne;
+      document.getElementById("terminal-tip-two-title").textContent = ui.terminalTipTwoTitle;
+      document.getElementById("terminal-tip-two").textContent = ui.terminalTipTwo;
+      document.getElementById("terminal-tip-three-title").textContent = ui.terminalTipThreeTitle;
+      document.getElementById("terminal-tip-three").textContent = ui.terminalTipThree;
+      document.getElementById("terminal-tip-four-title").textContent = ui.terminalTipFourTitle;
+      document.getElementById("terminal-tip-four").textContent = ui.terminalTipFour;
+      document.getElementById("terminal-tip-five-title").textContent = ui.terminalTipFiveTitle;
+      document.getElementById("terminal-tip-five").textContent = ui.terminalTipFive;
+      document.getElementById("terminal-categories-title").textContent = ui.terminalCategoriesTitle;
+      document.getElementById("terminal-category-web-title").textContent = ui.terminalCategoryWebTitle;
+      document.getElementById("terminal-category-web").textContent = ui.terminalCategoryWeb;
+      document.getElementById("terminal-category-scripts-title").textContent = ui.terminalCategoryScriptsTitle;
+      document.getElementById("terminal-category-scripts").textContent = ui.terminalCategoryScripts;
+      document.getElementById("terminal-category-apps-title").textContent = ui.terminalCategoryAppsTitle;
+      document.getElementById("terminal-category-apps").textContent = ui.terminalCategoryApps;
+      document.getElementById("terminal-category-systems-title").textContent = ui.terminalCategorySystemsTitle;
+      document.getElementById("terminal-category-systems").textContent = ui.terminalCategorySystems;
+      document.getElementById("terminal-tips-note").textContent = ui.terminalTipsNote;
       updateLevelButtons();
       languageToggle.querySelector(".language-label").textContent = ui.switchLanguage;
       languageToggle.setAttribute("aria-label", ui.languageLabel);
