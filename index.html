@@ -186,6 +186,36 @@
     .terminal-card { overflow: hidden; color: #e8f4ec; background: #182b36; border-radius: 16px; box-shadow: var(--shadow); }
     .terminal-bar { display: flex; align-items: center; gap: 9px; padding: 11px 14px; color: #afc0c5; border-bottom: 1px solid rgba(255,255,255,.1); font-size: 11px; }
     .terminal-bar .dots { margin-right: 3px; }
+    .terminal-code-demo { padding: 14px; border-bottom: 1px solid rgba(255,255,255,.1); }
+    .terminal-demo-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .terminal-demo-heading strong { display: block; font-size: 12px; }
+    .terminal-demo-description { margin: 4px 0 0; color: #afc0c5; font-size: 10px; line-height: 1.5; }
+    .terminal-demo-language { padding: 5px 8px; color: #bdd9ff; background: rgba(125,170,230,.12); border-radius: 7px; font-size: 10px; font-weight: 800; }
+    .terminal-diff-legend { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0 6px; color: #afc0c5; font-size: 9px; }
+    .terminal-diff-legend span:first-child { color: #ffb6ab; }
+    .terminal-diff-legend span:last-child { color: #c9efbc; }
+    .terminal-diff { margin: 0; padding: 8px 0; overflow-x: auto; background: #111e26; border-radius: 10px; font: 11px/1.8 ui-monospace, SFMono-Regular, Consolas, monospace; white-space: pre; }
+    .terminal-diff code { display: block; }
+    .terminal-diff-line { display: block; min-width: max-content; padding: 0 10px; }
+    .terminal-diff-line.removed { color: #ffd2cc; background: rgba(213,86,75,.22); }
+    .terminal-diff-line.added { color: #e1f8d8; background: rgba(91,156,73,.24); }
+    .terminal-diff-marker { display: inline-block; width: 17px; color: #afc0c5; user-select: none; }
+    .terminal-diff-line.removed .terminal-diff-marker { color: #ff9f91; }
+    .terminal-diff-line.added .terminal-diff-marker { color: #a7e58d; }
+    .terminal-code-keyword { color: #c9a7ff; }
+    .terminal-code-function { color: #7bc2ff; }
+    .terminal-code-parameter { color: #ffd27b; }
+    .terminal-code-string { color: #a6e38d; }
+    .terminal-code-comment { color: #8ba39a; }
+    .terminal-demo-explanation { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 10px 0; }
+    .terminal-demo-step { padding: 9px 10px; background: rgba(255,255,255,.06); border-radius: 9px; }
+    .terminal-demo-step strong { display: block; margin-bottom: 4px; color: #dce8e2; font-size: 10px; }
+    .terminal-demo-step p { margin: 0; color: #afc0c5; font-size: 9px; line-height: 1.5; }
+    .terminal-demo-form { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,.1); }
+    .terminal-demo-form label { color: #afc0c5; font-size: 10px; }
+    .terminal-demo-name { width: 130px; max-width: 100%; padding: 7px 9px; color: #f2f7f2; background: #111e26; border: 1px solid rgba(255,255,255,.15); border-radius: 7px; font: 11px ui-monospace, SFMono-Regular, Consolas, monospace; }
+    .terminal-demo-name:focus { outline: 2px solid #8bc957; outline-offset: 1px; }
+    .terminal-demo-result { flex: 1 1 180px; min-height: 16px; color: #b7ef74; font: 10px/1.5 ui-monospace, SFMono-Regular, Consolas, monospace; }
     .terminal-screen { min-height: 138px; max-height: 240px; overflow-y: auto; padding: 13px 15px; font: 12px/1.7 ui-monospace, SFMono-Regular, Consolas, monospace; }
     .terminal-line { min-height: 1.7em; overflow-wrap: anywhere; white-space: pre-wrap; }
     .terminal-muted { color: #9fb3ad; }
@@ -234,6 +264,7 @@
       .stat strong { font-size: 15px; }
       .stat small { font-size: 9px; }
       .lesson-layout { grid-template-columns: 1fr; }
+      .terminal-demo-explanation { grid-template-columns: 1fr; }
       .lesson-card { padding: 19px; }
       .lesson-card h3 { font-size: 22px; }
       .side-column { grid-template-columns: 1fr; }
@@ -339,6 +370,31 @@
           </div>
           <div class="terminal-card">
             <div class="terminal-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span id="terminal-bar-label">Safe practice terminal</span></div>
+            <section class="terminal-code-demo" aria-labelledby="terminal-demo-title">
+              <div class="terminal-demo-heading">
+                <div>
+                  <strong id="terminal-demo-title">See how code changes</strong>
+                  <p class="terminal-demo-description" id="terminal-demo-description">The red line is the old version. Green lines replace it.</p>
+                </div>
+                <span class="terminal-demo-language">JavaScript</span>
+              </div>
+              <div class="terminal-diff-legend" aria-label="Code change colors">
+                <span id="terminal-demo-old-label">− Old line removed</span>
+                <span id="terminal-demo-new-label">+ New lines added</span>
+              </div>
+              <pre class="terminal-diff" aria-label="JavaScript code change example"><code><span class="terminal-diff-line"><span class="terminal-diff-marker"> </span><span class="terminal-code-keyword">function</span> <span class="terminal-code-function">greet</span>(<span class="terminal-code-parameter">name</span>) {</span><span class="terminal-diff-line removed"><span class="terminal-diff-marker">−</span>  <span class="terminal-code-keyword">return</span> <span class="terminal-code-string">"Hi, "</span> + name;</span><span class="terminal-diff-line added"><span class="terminal-diff-marker">+</span>  <span class="terminal-code-keyword">const</span> msg = <span class="terminal-code-string">`Hello, ${<span class="terminal-code-parameter">name</span>}!`</span>;</span><span class="terminal-diff-line added"><span class="terminal-diff-marker">+</span>  <span class="terminal-code-keyword">return</span> msg; <span class="terminal-code-comment">// give the message back</span></span><span class="terminal-diff-line"><span class="terminal-diff-marker"> </span>}</span></code></pre>
+              <div class="terminal-demo-explanation">
+                <div class="terminal-demo-step"><strong id="terminal-demo-step-one-title">1. Give it a name</strong><p id="terminal-demo-step-one">greet(name) is a reusable recipe. name is the input.</p></div>
+                <div class="terminal-demo-step"><strong id="terminal-demo-step-two-title">2. Build a message</strong><p id="terminal-demo-step-two">const saves a value. ${name} puts the input name into the greeting.</p></div>
+                <div class="terminal-demo-step"><strong id="terminal-demo-step-three-title">3. Send it back</strong><p id="terminal-demo-step-three">return gives the result back. greet("Himesh") returns Hello, Himesh!</p></div>
+              </div>
+              <form class="terminal-demo-form" id="terminal-demo-form">
+                <label id="terminal-demo-name-label" for="terminal-demo-name">Try a name:</label>
+                <input class="terminal-demo-name" id="terminal-demo-name" type="text" value="Himesh" maxlength="40" autocomplete="off">
+                <button class="terminal-run" id="terminal-demo-run" type="submit">Run example</button>
+                <output class="terminal-demo-result" id="terminal-demo-result" aria-live="polite">Change the name above and press Run example.</output>
+              </form>
+            </section>
             <div class="terminal-screen" id="terminal-output" role="log" aria-live="polite" aria-label="Terminal output">
               <div class="terminal-line terminal-muted" id="terminal-welcome">Welcome, Himesh! Type help to see what you can try.</div>
             </div>
@@ -1261,6 +1317,14 @@
         terminalRunHint: "Try: run python, run javascript, or run c++. These only show pretend output.",
         terminalScriptFile: "Example file name", terminalScriptMeaning: "What the code does",
         terminalSimulated: "[Practice simulation — this code did not really run]",
+        terminalDemoTitle: "See how code changes", terminalDemoDescription: "The red line is the old version. Green lines replace it.",
+        terminalDemoOldLabel: "− Old line removed", terminalDemoNewLabel: "+ New lines added",
+        terminalDemoStepOneTitle: "1. Give it a name", terminalDemoStepOne: "greet(name) is a reusable recipe. name is the input.",
+        terminalDemoStepTwoTitle: "2. Build a message", terminalDemoStepTwo: "const saves a value. ${name} puts the input name into the greeting.",
+        terminalDemoStepThreeTitle: "3. Send it back", terminalDemoStepThree: "return gives the result back. greet(\"Himesh\") returns Hello, Himesh!",
+        terminalDemoNameLabel: "Try a name:", terminalDemoRun: "Run example",
+        terminalDemoPlaceholder: "Change the name above and press Run example.",
+        terminalDemoOutputLabel: "Output", terminalDemoDefaultName: "friend",
         terminalUnknown: "That command isn’t in this practice terminal. Type help to see commands.",
         terminalFileMissing: "That file isn’t here. Type ls to see practice files.",
         terminalReadme: "This is a pretend practice folder. You are learning one command at a time.",
@@ -1313,6 +1377,14 @@
         terminalRunHint: "Try karo: run python, run javascript, ya run c++. Yeh sirf nakli output dikhate hain.",
         terminalScriptFile: "Example file ka naam", terminalScriptMeaning: "Code kya karta hai",
         terminalSimulated: "[Practice simulation — code sach mein nahi chala]",
+        terminalDemoTitle: "Code ka badlav dekho", terminalDemoDescription: "Laal line purana code hai. Hari lines uski jagah naya code hain.",
+        terminalDemoOldLabel: "− Purani line hatai", terminalDemoNewLabel: "+ Nayi lines jodi",
+        terminalDemoStepOneTitle: "1. Iska naam rakho", terminalDemoStepOne: "greet(name) dobara use hone wali recipe hai. name uska input hai.",
+        terminalDemoStepTwoTitle: "2. Message banao", terminalDemoStepTwo: "const ek value save karta hai. ${name} input wala naam greeting mein jodta hai.",
+        terminalDemoStepThreeTitle: "3. Wapas bhejo", terminalDemoStepThree: "return result wapas deta hai. greet(\"Himesh\") se Hello, Himesh! milta hai.",
+        terminalDemoNameLabel: "Naam try karo:", terminalDemoRun: "Example chalao",
+        terminalDemoPlaceholder: "Upar naam badlo aur Example chalao dabao.",
+        terminalDemoOutputLabel: "Output", terminalDemoDefaultName: "dost",
         terminalUnknown: "Yeh command practice terminal mein nahi hai. Commands dekhne ke liye help type karo.",
         terminalFileMissing: "Yeh file yahan nahi hai. Practice files dekhne ke liye ls type karo.",
         terminalReadme: "Yeh practice ke liye banaya gaya nakli folder hai. Tum ek-ek command seekh rahe ho.",
@@ -1970,6 +2042,21 @@
       sql: "sql"
     };
 
+    let greetingDemoName = null;
+
+    function greet(name) {
+      const msg = `Hello, ${name}!`;
+      return msg;
+    }
+
+    function renderGreetingDemoOutput() {
+      const ui = uiText[language];
+      const output = document.getElementById("terminal-demo-result");
+      output.textContent = greetingDemoName === null
+        ? ui.terminalDemoPlaceholder
+        : `${ui.terminalDemoOutputLabel}: ${greet(greetingDemoName)}`;
+    }
+
     function printTerminalLine(text, className = "") {
       const output = document.getElementById("terminal-output");
       const line = document.createElement("div");
@@ -2071,6 +2158,13 @@
           input.focus();
         });
       });
+
+      document.getElementById("terminal-demo-form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        const name = document.getElementById("terminal-demo-name").value.trim().slice(0, 40);
+        greetingDemoName = name || uiText[language].terminalDemoDefaultName;
+        renderGreetingDemoOutput();
+      });
     }
 
     document.querySelectorAll(".path-button").forEach((button) => {
@@ -2134,6 +2228,19 @@
       document.getElementById("terminal-try-label").textContent = ui.terminalTryLabel;
       document.getElementById("terminal-safety").textContent = ui.terminalSafety;
       document.getElementById("terminal-output").setAttribute("aria-label", ui.terminalOutputLabel);
+      document.getElementById("terminal-demo-title").textContent = ui.terminalDemoTitle;
+      document.getElementById("terminal-demo-description").textContent = ui.terminalDemoDescription;
+      document.getElementById("terminal-demo-old-label").textContent = ui.terminalDemoOldLabel;
+      document.getElementById("terminal-demo-new-label").textContent = ui.terminalDemoNewLabel;
+      document.getElementById("terminal-demo-step-one-title").textContent = ui.terminalDemoStepOneTitle;
+      document.getElementById("terminal-demo-step-one").textContent = ui.terminalDemoStepOne;
+      document.getElementById("terminal-demo-step-two-title").textContent = ui.terminalDemoStepTwoTitle;
+      document.getElementById("terminal-demo-step-two").textContent = ui.terminalDemoStepTwo;
+      document.getElementById("terminal-demo-step-three-title").textContent = ui.terminalDemoStepThreeTitle;
+      document.getElementById("terminal-demo-step-three").textContent = ui.terminalDemoStepThree;
+      document.getElementById("terminal-demo-name-label").textContent = ui.terminalDemoNameLabel;
+      document.getElementById("terminal-demo-run").textContent = ui.terminalDemoRun;
+      renderGreetingDemoOutput();
       updateLevelButtons();
       languageToggle.querySelector(".language-label").textContent = ui.switchLanguage;
       languageToggle.setAttribute("aria-label", ui.languageLabel);
