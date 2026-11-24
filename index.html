@@ -89,6 +89,22 @@
     .lesson-layout { display: grid; grid-template-columns: minmax(0, 1fr) 218px; gap: 15px; align-items: start; }
     .lesson-card, .side-card { background: white; border: 1px solid var(--line); border-radius: 20px; box-shadow: var(--shadow); }
     .lesson-card { padding: 25px; }
+    .lesson-page-toolbar { display: none; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+    .lesson-back-button { padding: 9px 12px; color: #355a32; background: #f1f7e9; border: 1px solid #e2ecd8; border-radius: 10px; cursor: pointer; font-size: 11px; font-weight: 800; }
+    .lesson-back-button:hover { background: #e8f3dc; }
+    .lesson-page-label { color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: 1px; }
+    .app.lesson-page-mode .layout { grid-template-columns: minmax(0, 1fr); }
+    .app.lesson-page-mode .sidebar,
+    .app.lesson-page-mode .welcome,
+    .app.lesson-page-mode .stats,
+    .app.lesson-page-mode .section-heading,
+    .app.lesson-page-mode .side-column,
+    .app.lesson-page-mode .terminal-section,
+    .app.lesson-page-mode .bottom-note { display: none; }
+    .app.lesson-page-mode .main { width: 100%; max-width: 930px; margin: 0 auto; }
+    .app.lesson-page-mode .lesson-layout { display: block; }
+    .app.lesson-page-mode .lesson-card { padding: clamp(20px, 4vw, 38px); }
+    .app.lesson-page-mode .lesson-page-toolbar { display: flex; }
     .lesson-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; }
     .lesson-label { display: inline-flex; align-items: center; gap: 7px; color: #65834f; font-size: 11px; font-weight: 800; letter-spacing: .6px; text-transform: uppercase; }
     .lesson-time { color: var(--muted); font-size: 11px; }
@@ -1403,6 +1419,7 @@
         intermediateTitle: "Level 2 · Intermediate", intermediateDescription: "Bring ideas together with projects, lists, APIs, Git, and databases.",
         expertTitle: "Level 3 · Advanced: safe and ethical security", expertDescription: "Learn networks, permission, and defensive security. These are foundations; expertise takes time and practice. Practice only in a lab or on systems you own or have permission to test.",
         resetConfirm: "Start your learning adventure over? This clears saved XP and completed lessons, but keeps your notes.",
+        lessonPageLabel: "LESSON PAGE", backToLessons: "← Back to lessons",
         fullScreen: "Full screen", exitFullScreen: "Exit full screen", fullScreenHelp: "View full screen (or press F11)", exitFullScreenHelp: "Exit full screen (or press Esc)",
         fullScreenBlocked: "Full screen wasn’t available here. Press F11 to make your browser full screen."
       },
@@ -1476,6 +1493,7 @@
         intermediateTitle: "Level 2 · Beech ka level", intermediateDescription: "Projects, lists, APIs, Git aur databases seekho.",
         expertTitle: "Level 3 · Advanced: safe aur ethical security", expertDescription: "Network, permission aur protection seekho. Yeh shuruaat hai—expert banne ke liye kaafi practice chahiye. Practice sirf lab ya apne/permission wale system par karo.",
         resetConfirm: "Kya tum learning phir se shuru karna chahte ho? Saved XP aur completed lessons clear honge, notes nahi mitenge.",
+        lessonPageLabel: "LESSON PAGE", backToLessons: "← Lessons par wapas",
         fullScreen: "Full screen", exitFullScreen: "Full screen band karo", fullScreenHelp: "Full screen dekho (ya F11 dabao)", exitFullScreenHelp: "Full screen se niklo (ya Esc dabao)",
         fullScreenBlocked: "Yahan full screen nahi khul paayi. Browser ko full screen karne ke liye F11 dabao."
       }
@@ -1506,8 +1524,16 @@
     const levelOrder = ["zero", "beginner", "intermediate", "expert"];
     const saved = loadProgress();
     let language = loadLanguage();
-    let currentId = lessons.find((lesson) => !saved.completed.includes(lesson.id))?.id || lessons[0].id;
-    let activeLevel = lessons.find((lesson) => !saved.completed.includes(lesson.id))?.level || "all";
+    function getLessonRoute() {
+      const match = window.location.hash.match(/^#lesson\/([a-z0-9-]+)$/i);
+      return match ? lessons.find((lesson) => lesson.id === match[1]) || null : null;
+    }
+    const firstUnfinishedLesson = lessons.find((lesson) => !saved.completed.includes(lesson.id));
+    const requestedLesson = getLessonRoute();
+    const initialLesson = requestedLesson && isLevelUnlocked(requestedLesson.level) ? requestedLesson : null;
+    let currentId = initialLesson?.id || firstUnfinishedLesson?.id || lessons[0].id;
+    let activeLevel = initialLesson?.level || firstUnfinishedLesson?.level || "all";
+    let lessonPageOpen = Boolean(initialLesson);
     let answeredCorrectly = saved.completed.includes(currentId);
 
     function loadProgress() {
@@ -1597,7 +1623,12 @@
       const complete = saved.completed.includes(lesson.id);
       const practiceComplete = saved.practiceCompleted.includes(lesson.id);
       const ui = uiText[language];
+      document.title = lessonPageOpen ? `${text.title} — Code Quest` : "Code Quest — Learn by playing";
       document.getElementById("lesson-card").innerHTML = `
+        <div class="lesson-page-toolbar">
+          <button type="button" class="lesson-back-button" id="lesson-back-button">${ui.backToLessons}</button>
+          <span class="lesson-page-label">${ui.lessonPageLabel}</span>
+        </div>
         <div class="lesson-top">
           <span class="lesson-label"><span aria-hidden="true">${lesson.icon}</span> ${text.label}</span>
           <span class="lesson-time">${complete ? `✅ ${ui.lessonComplete}` : `⏱ ${ui.lessonTime}`}</span>
@@ -1675,6 +1706,7 @@
 
       const practiceInput = document.getElementById("practice-input");
       const notesInput = document.getElementById("lesson-notes");
+      document.getElementById("lesson-back-button").addEventListener("click", returnToLessons);
       practiceInput.value = typeof saved.practiceDrafts[lesson.id] === "string" ? saved.practiceDrafts[lesson.id] : "";
       notesInput.value = typeof saved.notes[lesson.id] === "string" ? saved.notes[lesson.id] : "";
       const typingInput = document.getElementById("typing-input");
@@ -1853,11 +1885,35 @@
       selectLesson(next.id, activeLevel === "all");
     }
 
+    function returnToLessons() {
+      window.location.hash = "home";
+      if (window.location.hash === "#home") handleLessonRouteChange();
+    }
+
+    function handleLessonRouteChange() {
+      const routeLesson = getLessonRoute();
+      lessonPageOpen = Boolean(routeLesson && isLevelUnlocked(routeLesson.level));
+      if (lessonPageOpen) {
+        currentId = routeLesson.id;
+        activeLevel = routeLesson.level;
+      }
+      answeredCorrectly = saved.completed.includes(currentId);
+      document.querySelector(".app").classList.toggle("lesson-page-mode", lessonPageOpen);
+      updateLevelButtons();
+      renderStats();
+      renderLesson();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
     function selectLesson(id, keepCurrentLevel = false) {
       const selectedLesson = lessons.find((lesson) => lesson.id === id);
       if (!selectedLesson || !isLevelUnlocked(selectedLesson.level)) return;
       currentId = id;
       if (!keepCurrentLevel) activeLevel = selectedLesson.level;
+      lessonPageOpen = true;
+      document.querySelector(".app").classList.add("lesson-page-mode");
+      const lessonHash = `#lesson/${encodeURIComponent(id)}`;
+      if (window.location.hash !== lessonHash) window.location.hash = lessonHash;
       updateLevelButtons();
       answeredCorrectly = saved.completed.includes(id);
       renderStats();
@@ -2248,6 +2304,7 @@
       saved.xp = 0;
       currentId = lessons[0].id;
       activeLevel = "zero";
+      if (lessonPageOpen) window.location.hash = `#lesson/${encodeURIComponent(currentId)}`;
       updateLevelButtons();
       answeredCorrectly = false;
       saveProgress();
@@ -2374,12 +2431,14 @@
     });
 
     document.addEventListener("fullscreenchange", updateFullscreenButton);
+    window.addEventListener("hashchange", handleLessonRouteChange);
     languageToggle.addEventListener("click", () => {
       document.getElementById("fullscreen-status").textContent = "";
     });
     updateLanguage();
     updateFullscreenButton();
     initializePracticeTerminal();
+    document.querySelector(".app").classList.toggle("lesson-page-mode", lessonPageOpen);
     renderStats();
     renderLesson();
   </script>
