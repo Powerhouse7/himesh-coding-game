@@ -170,6 +170,29 @@
     .tip-card { background: #fff7e9; border-color: #f5ead5; }
     .tip-card h3 { display: flex; gap: 7px; align-items: center; }
     .tip-card p { margin: 0; color: #75694f; font-size: 11px; line-height: 1.6; }
+    .terminal-section { margin-top: 20px; }
+    .terminal-heading { margin: 0 2px 12px; }
+    .terminal-heading h2 { margin: 0; font-size: 20px; letter-spacing: -.6px; }
+    .terminal-heading p { margin: 5px 0 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+    .terminal-card { overflow: hidden; color: #e8f4ec; background: #182b36; border-radius: 16px; box-shadow: var(--shadow); }
+    .terminal-bar { display: flex; align-items: center; gap: 9px; padding: 11px 14px; color: #afc0c5; border-bottom: 1px solid rgba(255,255,255,.1); font-size: 11px; }
+    .terminal-bar .dots { margin-right: 3px; }
+    .terminal-screen { min-height: 138px; max-height: 240px; overflow-y: auto; padding: 13px 15px; font: 12px/1.7 ui-monospace, SFMono-Regular, Consolas, monospace; }
+    .terminal-line { min-height: 1.7em; overflow-wrap: anywhere; white-space: pre-wrap; }
+    .terminal-muted { color: #9fb3ad; }
+    .terminal-command-echo { color: #b7ef74; }
+    .terminal-form { display: flex; align-items: center; gap: 9px; padding: 10px 12px; border-top: 1px solid rgba(255,255,255,.1); }
+    .terminal-prompt { color: #b7ef74; font: 700 11px ui-monospace, SFMono-Regular, Consolas, monospace; white-space: nowrap; }
+    .terminal-input { min-width: 0; flex: 1; padding: 8px 0; color: #f2f7f2; background: transparent; border: 0; outline: 0; font: 12px ui-monospace, SFMono-Regular, Consolas, monospace; }
+    .terminal-input::placeholder { color: #80968e; }
+    .terminal-input:focus-visible { outline: 2px solid #8bc957; outline-offset: 3px; border-radius: 3px; }
+    .terminal-run { padding: 8px 12px; color: #20351a; background: var(--green); border: 0; border-radius: 8px; cursor: pointer; font-size: 11px; font-weight: 800; }
+    .terminal-run:hover { background: #a7e65b; }
+    .terminal-help { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+    .terminal-help-label, .terminal-safety { color: var(--muted); font-size: 10px; line-height: 1.55; }
+    .terminal-chip { padding: 5px 8px; color: #355a83; background: #e8f2ff; border: 1px solid #d5e6f8; border-radius: 7px; cursor: pointer; font: 11px ui-monospace, SFMono-Regular, Consolas, monospace; }
+    .terminal-chip:hover { background: #dcecff; }
+    .terminal-safety { margin: 8px 1px 0; }
     .bottom-note { margin: 21px 0 0; text-align: center; color: #86928e; font-size: 10px; }
     .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 
@@ -283,6 +306,30 @@
             </section>
           </aside>
         </div>
+        <section class="terminal-section" aria-labelledby="terminal-title">
+          <div class="terminal-heading">
+            <h2 id="terminal-title">🖥 Terminal playground</h2>
+            <p id="terminal-description">Practice a few simple computer commands. You can’t change files or settings on your laptop here.</p>
+          </div>
+          <div class="terminal-card">
+            <div class="terminal-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span id="terminal-bar-label">Safe practice terminal</span></div>
+            <div class="terminal-screen" id="terminal-output" role="log" aria-live="polite" aria-label="Terminal output">
+              <div class="terminal-line terminal-muted" id="terminal-welcome">Welcome, Himesh! Type help to see what you can try.</div>
+            </div>
+            <form class="terminal-form" id="terminal-form">
+              <label class="terminal-prompt" for="terminal-command">himesh@codequest:~$</label>
+              <input class="terminal-input" id="terminal-command" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type a command, like help" aria-label="Type a practice command">
+              <button class="terminal-run" id="terminal-run" type="submit">Run</button>
+            </form>
+          </div>
+          <div class="terminal-help">
+            <span class="terminal-help-label" id="terminal-try-label">Try a command:</span>
+            <button class="terminal-chip" type="button" data-terminal-command="help">help</button>
+            <button class="terminal-chip" type="button" data-terminal-command="ls">ls</button>
+            <button class="terminal-chip" type="button" data-terminal-command="python hello.py">python hello.py</button>
+          </div>
+          <p class="terminal-safety" id="terminal-safety">Practice simulator only — commands run here in the lesson, not on your computer.</p>
+        </section>
         <p class="bottom-note" id="bottom-note">Your progress saves on this device. Click <strong>Full screen</strong> above or press <strong>F11</strong> to fill your screen.</p>
       </main>
     </div>
@@ -1163,6 +1210,18 @@
         sectionDescription: "Small steps, plain words, no experience needed.", resetProgress: "Reset progress", nextSteps: "Lessons in this level", lessonCountOne: "lesson", lessonCountMany: "lessons",
         tipTitle: "Quest tip", tipDescription: "Making mistakes is part of coding! Developers try, learn what happened, and try again. That’s how you level up.",
         bottomNote: "Your progress and notes save on this device. Click Full screen above or press F11 to fill your screen.",
+        terminalTitle: "🖥 Terminal playground",
+        terminalDescription: "Practice a few simple computer commands. You can’t change files or settings on your laptop here.",
+        terminalBarLabel: "Safe practice terminal", terminalWelcome: "Welcome, Himesh! Type help to see what you can try.",
+        terminalPlaceholder: "Type a command, like help", terminalInputLabel: "Type a practice command", terminalRun: "Run",
+        terminalTryLabel: "Try a command:", terminalSafety: "Practice simulator only — commands run here in the lesson, not on your computer.",
+        terminalOutputLabel: "Terminal output", terminalHelp: "Available commands:\nhelp — show this list\nclear — clear the screen\nwhoami — show the practice user\npwd — show the practice folder\nls — list practice files\ncat README.txt — read the practice note\necho TEXT — print your text\npython hello.py — run a sample Python script",
+        terminalUnknown: "That command isn’t in this practice terminal. Type help to see commands.",
+        terminalFileMissing: "That file isn’t here. Type ls to see practice files.",
+        terminalReadme: "This is a pretend practice folder. You are learning one command at a time.",
+        terminalUser: "himesh (practice user)", terminalWorkingFolder: "/home/himesh/coding-quest",
+        terminalPythonHelp: "Try: python hello.py",
+        lessonComplete: "Lesson complete", lessonTime: "About 2 minutes", example: "A tiny example", breakdownTitle: "What each part means",
         lessonComplete: "Lesson complete", lessonTime: "About 2 minutes", example: "A tiny example", breakdownTitle: "What each part means",
         walkthroughTitle: "▶️ Run the code one line at a time", runLineOne: "Run line 1", runLineTwo: "Run line 2", scoreLabel: "Current score", lineOneExplain: "Make a named box called score and put 1 in it.", lineTwoExplain: "Take the old score (1), add 1, and save the new value.", startWalkthrough: "Start with line 1. The score will be 1.", lineOneDone: "Line 1 ran: score now holds 1. Now run line 2.", lineTwoDone: "Line 2 used the old 1, added 1, and saved 2.",
         scriptWalkthroughTitle: "▶️ Make and run your first script", scriptFileExplain: "A script is code saved in a file. The `.py` ending means it is a Python file.", scriptLineOneExplain: "Tell Python to show Hello, Himesh! on the screen.", scriptLineTwoExplain: "Tell Python to show another message on the next line.", scriptOutputTitle: "What the script shows", scriptOutputStart: "Run line 1 to see what the script displays.", scriptLineOneDone: "Line 1 ran. Now run line 2.", scriptLineTwoDone: "Great! Your two-line script ran in order.",
@@ -1197,6 +1256,18 @@
         sectionDescription: "Chhote steps, aasaan words—pehle se kuch aana zaroori nahi.", resetProgress: "Progress reset karo", nextSteps: "Is level ke lessons", lessonCountOne: "lesson", lessonCountMany: "lessons",
         tipTitle: "Quest tip", tipDescription: "Coding mein galtiyan hona normal hai! Try karo, samjho kya hua, phir dobara try karo. Isi tarah level up hote ho.",
         bottomNote: "Tumhari progress aur notes isi device par save hote hain. Upar Full screen dabao ya F11 press karke poori screen use karo.",
+        terminalTitle: "🖥 Terminal par practice",
+        terminalDescription: "Computer ke kuch aasaan commands yahan practice karo. Isse laptop ki files ya settings nahi badalengi.",
+        terminalBarLabel: "Safe practice terminal", terminalWelcome: "Welcome Himesh! Kya try kar sakte ho dekhne ke liye help type karo.",
+        terminalPlaceholder: "Jaise help, koi command likho", terminalInputLabel: "Practice command yahan likho", terminalRun: "Chalao",
+        terminalTryLabel: "Yeh command try karo:", terminalSafety: "Yeh sirf practice simulator hai — commands yahin lesson mein chalti hain, laptop par nahi.",
+        terminalOutputLabel: "Terminal ka output", terminalHelp: "Available commands:\nhelp — yeh list dekho\nclear — screen saaf karo\nwhoami — practice user dekho\npwd — practice folder dekho\nls — practice files dekho\ncat README.txt — practice note padho\necho TEXT — apna text dikhao\npython hello.py — sample Python script chalao",
+        terminalUnknown: "Yeh command practice terminal mein nahi hai. Commands dekhne ke liye help type karo.",
+        terminalFileMissing: "Yeh file yahan nahi hai. Practice files dekhne ke liye ls type karo.",
+        terminalReadme: "Yeh practice ke liye banaya gaya nakli folder hai. Tum ek-ek command seekh rahe ho.",
+        terminalUser: "himesh (practice user)", terminalWorkingFolder: "/home/himesh/coding-quest",
+        terminalPythonHelp: "Yeh try karo: python hello.py",
+        lessonComplete: "Lesson complete", lessonTime: "Lagbhag 2 minute", example: "Chhota sa example", breakdownTitle: "Har part ka kya matlab hai",
         lessonComplete: "Lesson complete", lessonTime: "Lagbhag 2 minute", example: "Chhota sa example", breakdownTitle: "Har part ka kya matlab hai",
         walkthroughTitle: "▶️ Code ko ek-ek line chalao", runLineOne: "Line 1 chalao", runLineTwo: "Line 2 chalao", scoreLabel: "Abhi score", lineOneExplain: "`score` naam ka box banao aur usmein 1 rakho.", lineTwoExplain: "Purana score (1) lo, usmein 1 jodo, aur naya number save karo.", startWalkthrough: "Pehle line 1 chalao. Score 1 ho jaayega.", lineOneDone: "Line 1 chali: score ab 1 hai. Ab line 2 chalao.", lineTwoDone: "Line 2 ne purana 1 liya, usmein 1 joda aur 2 save kiya.",
         scriptWalkthroughTitle: "▶️ Apni pehli script banao aur chalao", scriptFileExplain: "Script code ki saved file hoti hai. `.py` se pata chalta hai ki yeh Python file hai.", scriptLineOneExplain: "Python ko screen par Hello, Himesh! dikhane ko kaho.", scriptLineTwoExplain: "Python ko agli line par ek aur message dikhane ko kaho.", scriptOutputTitle: "Script screen par kya dikhati hai", scriptOutputStart: "Script kya dikhati hai dekhne ke liye line 1 chalao.", scriptLineOneDone: "Line 1 chal gayi. Ab line 2 chalao.", scriptLineTwoDone: "Bahut badhiya! Tumhari do-line script sahi order mein chali.",
@@ -1653,6 +1724,87 @@
       document.getElementById("section-description").textContent = selectedLevelDescription;
     }
 
+    function printTerminalLine(text, className = "") {
+      const output = document.getElementById("terminal-output");
+      const line = document.createElement("div");
+      line.className = `terminal-line ${className}`.trim();
+      line.textContent = text;
+      output.appendChild(line);
+      while (output.childElementCount > 50) output.firstElementChild.remove();
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function runPracticeCommand(rawCommand) {
+      const command = rawCommand.trim();
+      if (!command) return;
+
+      const output = document.getElementById("terminal-output");
+      const normalized = command.toLowerCase();
+      if (normalized === "clear") {
+        output.replaceChildren();
+        return;
+      }
+
+      printTerminalLine(`himesh@codequest:~$ ${command}`, "terminal-command-echo");
+      const ui = uiText[language];
+      let result;
+
+      if (normalized === "help") result = ui.terminalHelp.split("\n");
+      else if (normalized === "whoami") result = [ui.terminalUser];
+      else if (normalized === "pwd") result = [ui.terminalWorkingFolder];
+      else if (normalized === "ls") result = ["README.txt   hello.py"];
+      else if (normalized === "cat readme.txt") result = [ui.terminalReadme];
+      else if (normalized === "cat" || normalized.startsWith("cat ")) result = [ui.terminalFileMissing];
+      else if (/^echo(?:\s|$)/i.test(command)) result = [command.replace(/^echo(?:\s+|$)/i, "")];
+      else if (/^(python|python3)(?:\s|$)/i.test(command)) {
+        const script = command.replace(/^\S+\s*/, "").trim().toLowerCase();
+        result = script === "hello.py"
+          ? ["Hello, Himesh!", "I am learning Python."]
+          : [ui.terminalPythonHelp];
+      } else result = [ui.terminalUnknown];
+
+      result.forEach((line) => printTerminalLine(line));
+    }
+
+    function initializePracticeTerminal() {
+      const form = document.getElementById("terminal-form");
+      const input = document.getElementById("terminal-command");
+      const history = [];
+      let historyPosition = 0;
+
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const command = input.value;
+        if (command.trim()) {
+          history.push(command);
+          if (history.length > 30) history.shift();
+          historyPosition = history.length;
+          runPracticeCommand(command);
+        }
+        input.value = "";
+      });
+
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "ArrowUp" && history.length) {
+          event.preventDefault();
+          historyPosition = Math.max(0, historyPosition - 1);
+          input.value = history[historyPosition];
+        } else if (event.key === "ArrowDown" && history.length) {
+          event.preventDefault();
+          historyPosition = Math.min(history.length, historyPosition + 1);
+          input.value = history[historyPosition] || "";
+        }
+      });
+
+      document.querySelectorAll(".terminal-chip").forEach((button) => {
+        button.addEventListener("click", () => {
+          input.value = button.dataset.terminalCommand;
+          form.requestSubmit();
+          input.focus();
+        });
+      });
+    }
+
     document.querySelectorAll(".path-button").forEach((button) => {
       button.addEventListener("click", () => {
         activeLevel = button.dataset.level;
@@ -1704,6 +1856,16 @@
       document.getElementById("tip-title").innerHTML = `<span aria-hidden="true">💡</span> ${ui.tipTitle}`;
       document.getElementById("tip-description").textContent = ui.tipDescription;
       document.getElementById("bottom-note").textContent = ui.bottomNote;
+      document.getElementById("terminal-title").textContent = ui.terminalTitle;
+      document.getElementById("terminal-description").textContent = ui.terminalDescription;
+      document.getElementById("terminal-bar-label").textContent = ui.terminalBarLabel;
+      document.getElementById("terminal-welcome").textContent = ui.terminalWelcome;
+      document.getElementById("terminal-command").placeholder = ui.terminalPlaceholder;
+      document.getElementById("terminal-command").setAttribute("aria-label", ui.terminalInputLabel);
+      document.getElementById("terminal-run").textContent = ui.terminalRun;
+      document.getElementById("terminal-try-label").textContent = ui.terminalTryLabel;
+      document.getElementById("terminal-safety").textContent = ui.terminalSafety;
+      document.getElementById("terminal-output").setAttribute("aria-label", ui.terminalOutputLabel);
       updateLevelButtons();
       languageToggle.querySelector(".language-label").textContent = ui.switchLanguage;
       languageToggle.setAttribute("aria-label", ui.languageLabel);
@@ -1756,6 +1918,7 @@
     });
     updateLanguage();
     updateFullscreenButton();
+    initializePracticeTerminal();
     renderStats();
     renderLesson();
   </script>
