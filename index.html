@@ -1,0 +1,1763 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f7f2">
+  <title>Code Quest — Learn by playing</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172a35;
+      --muted: #71818a;
+      --paper: #f6f7f2;
+      --white: #fff;
+      --line: #e7ebe5;
+      --green: #b7ef74;
+      --green-dark: #4b7f35;
+      --blue: #dcecff;
+      --lavender: #eee8ff;
+      --orange: #fff0dc;
+      --shadow: 0 16px 42px rgba(34, 54, 57, .07);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; min-width: 320px; background: var(--paper); color: var(--ink); }
+    button { font: inherit; }
+    button:focus-visible, a:focus-visible { outline: 3px solid #6c9eec; outline-offset: 3px; }
+    .app { width: min(1440px, 100%); margin: 0 auto; padding: 22px 30px 42px; }
+    .topbar { height: 58px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 26px; }
+    .brand { display: flex; align-items: center; gap: 11px; font-size: 19px; font-weight: 850; letter-spacing: -.7px; }
+    .brand-mark { width: 38px; height: 38px; display: grid; place-items: center; background: var(--green); border-radius: 13px; font-size: 20px; }
+    .top-right { display: flex; align-items: center; gap: 14px; }
+    .fullscreen-button { display: flex; align-items: center; gap: 6px; padding: 9px 11px; color: var(--ink); background: white; border: 1px solid var(--line); border-radius: 12px; cursor: pointer; font-size: 12px; font-weight: 750; }
+    .fullscreen-button:hover { background: #f5f8f2; }
+    .fullscreen-icon { font-size: 16px; line-height: 1; }
+    .language-button { padding: 9px 11px; color: var(--ink); background: white; border: 1px solid var(--line); border-radius: 12px; cursor: pointer; font-size: 12px; font-weight: 750; }
+    .language-button:hover { background: #f5f8f2; }
+    .streak { display: flex; align-items: center; gap: 7px; padding: 9px 13px; border: 1px solid var(--line); background: white; border-radius: 13px; font-size: 13px; font-weight: 750; }
+    .avatar { display: grid; place-items: center; width: 39px; height: 39px; background: #dcecff; border-radius: 50%; font-weight: 800; color: #355a83; }
+    .layout { display: grid; grid-template-columns: 252px minmax(0, 1fr); gap: 26px; align-items: start; }
+    .sidebar { padding: 20px 14px; background: var(--white); border: 1px solid var(--line); border-radius: 22px; box-shadow: var(--shadow); position: sticky; top: 16px; }
+    .side-heading { padding: 3px 11px 15px; color: var(--muted); font-size: 11px; font-weight: 800; letter-spacing: 1.3px; text-transform: uppercase; }
+    .path-button { width: 100%; display: flex; align-items: center; gap: 11px; padding: 11px 10px; margin: 3px 0; text-align: left; border: 0; border-radius: 12px; color: var(--ink); background: transparent; cursor: pointer; font-size: 13px; font-weight: 720; }
+    .path-button:hover, .path-button.active { background: #f1f7e9; }
+    .path-button:disabled { opacity: .58; cursor: not-allowed; }
+    .path-button:disabled:hover { background: transparent; }
+    .path-lock { margin-left: auto; font-size: 12px; }
+    .unlock-note { margin: 9px 10px 0; color: var(--muted); font-size: 10px; line-height: 1.5; }
+    .path-icon { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 9px; font-size: 15px; }
+    .path-button:nth-of-type(2) .path-icon { background: #e4f4d0; }
+    .path-button:nth-of-type(3) .path-icon { background: var(--blue); }
+    .path-button:nth-of-type(4) .path-icon { background: var(--lavender); }
+    .side-divider { height: 1px; margin: 17px 7px; background: var(--line); }
+    .mini-progress { margin: 8px 5px 2px; padding: 15px; background: #f8faf6; border-radius: 15px; }
+    .mini-progress-top { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 12px; font-weight: 750; }
+    .bar { width: 100%; height: 7px; overflow: hidden; background: #e7ebe5; border-radius: 10px; }
+    .bar-fill { height: 100%; width: 0; background: #8bc957; border-radius: inherit; transition: width .3s ease; }
+    .mini-note { margin-top: 9px; color: var(--muted); font-size: 11px; line-height: 1.5; }
+    .main { min-width: 0; }
+    .welcome { display: flex; justify-content: space-between; align-items: center; gap: 20px; min-height: 194px; padding: 30px 34px; overflow: hidden; position: relative; background: #e8f5dc; border-radius: 24px; }
+    .welcome:after { content: "✦"; position: absolute; right: 12%; top: -50px; color: rgba(91, 147, 63, .12); font-size: 260px; line-height: 1; pointer-events: none; }
+    .welcome-content { max-width: 580px; position: relative; z-index: 1; }
+    .eyebrow { color: #547a45; font-size: 11px; font-weight: 850; letter-spacing: 1.5px; text-transform: uppercase; }
+    h1 { margin: 9px 0 8px; font-size: clamp(26px, 3vw, 37px); line-height: 1.12; letter-spacing: -1.6px; }
+    .welcome p { max-width: 480px; margin: 0; color: #526a54; font-size: 14px; line-height: 1.6; }
+    .hero-art { position: relative; z-index: 1; display: grid; place-items: center; width: 122px; height: 122px; flex: 0 0 122px; border-radius: 34px; background: var(--green); transform: rotate(7deg); font-size: 58px; box-shadow: 0 12px 24px rgba(92, 136, 54, .12); }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; margin: 17px 0 27px; }
+    .stat { display: flex; align-items: center; gap: 12px; min-width: 0; padding: 15px 17px; background: white; border: 1px solid var(--line); border-radius: 16px; }
+    .stat-icon { width: 39px; height: 39px; display: grid; place-items: center; flex: 0 0 39px; border-radius: 12px; background: #fff0dc; font-size: 18px; }
+    .stat:nth-child(2) .stat-icon { background: var(--blue); }
+    .stat:nth-child(3) .stat-icon { background: var(--lavender); }
+    .stat strong { display: block; font-size: 18px; line-height: 1.15; }
+    .stat small { display: block; margin-top: 4px; color: var(--muted); font-size: 11px; white-space: nowrap; }
+    .section-heading { display: flex; justify-content: space-between; align-items: end; gap: 14px; margin: 0 2px 13px; }
+    .section-heading h2 { margin: 0; font-size: 20px; letter-spacing: -.6px; }
+    .section-heading p { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+    .text-button { padding: 7px 0; color: var(--muted); background: none; border: 0; cursor: pointer; font-size: 11px; font-weight: 700; }
+    .text-button:hover { color: var(--ink); }
+    .lesson-layout { display: grid; grid-template-columns: minmax(0, 1fr) 218px; gap: 15px; align-items: start; }
+    .lesson-card, .side-card { background: white; border: 1px solid var(--line); border-radius: 20px; box-shadow: var(--shadow); }
+    .lesson-card { padding: 25px; }
+    .lesson-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .lesson-label { display: inline-flex; align-items: center; gap: 7px; color: #65834f; font-size: 11px; font-weight: 800; letter-spacing: .6px; text-transform: uppercase; }
+    .lesson-time { color: var(--muted); font-size: 11px; }
+    .lesson-card h3 { margin: 0; font-size: 25px; letter-spacing: -.9px; }
+    .lesson-intro { margin: 9px 0 20px; color: #60717a; font-size: 13px; line-height: 1.7; }
+    .idea-box { display: flex; align-items: flex-start; gap: 12px; padding: 14px; margin: 15px 0 20px; background: #f6f9f2; border-radius: 14px; }
+    .idea-box > span { font-size: 18px; }
+    .idea-box strong { display: block; margin-bottom: 4px; font-size: 12px; }
+    .idea-box p { margin: 0; color: #62736b; font-size: 12px; line-height: 1.55; }
+    .breakdown-box { padding: 15px; margin: 16px 0 19px; background: #f5f8ff; border: 1px solid #e6ebf7; border-radius: 14px; }
+    .breakdown-box h4 { margin: 0 0 10px; font-size: 12px; }
+    .breakdown-list { display: grid; gap: 8px; }
+    .breakdown-row { display: grid; grid-template-columns: minmax(74px, .34fr) 1fr; gap: 10px; align-items: start; color: #60717a; font-size: 11px; line-height: 1.5; }
+    .breakdown-row code { width: fit-content; padding: 3px 6px; background: white; border: 1px solid #e2e7f2; border-radius: 6px; color: #314b65; font-size: 10px; }
+    .typing-box { padding: 14px; margin: 16px 0; background: #f7f8ff; border: 1px solid #e6e9f4; border-radius: 14px; }
+    .typing-box h4 { margin: 0 0 6px; font-size: 12px; }
+    .typing-box p { margin: 0 0 10px; color: #64737c; font-size: 11px; line-height: 1.5; }
+    .typing-guides { display: flex; flex-wrap: wrap; gap: 7px 14px; margin-bottom: 9px; color: #71818a; font-size: 10px; }
+    .typing-guides code { font: 700 12px ui-monospace, SFMono-Regular, Consolas, monospace; }
+    .typing-remaining { color: #a4adb5; letter-spacing: 1px; }
+    .typing-box input { width: 100%; padding: 10px 11px; color: var(--ink); background: white; border: 1px solid #dfe3ec; border-radius: 10px; font: 15px ui-monospace, SFMono-Regular, Consolas, monospace; }
+    .typing-box input:focus { outline: 2px solid #aeb8ef; outline-offset: 1px; }
+    .typing-status { display: block; min-height: 15px; margin-top: 6px; color: #5b7f43; font-size: 10px; }
+    .walkthrough-box { padding: 15px; margin: 16px 0; background: #f1f8ed; border: 1px solid #e0ecd7; border-radius: 14px; }
+    .walkthrough-box h4 { margin: 0 0 12px; font-size: 12px; }
+    .walkthrough-step { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px 12px; padding: 10px 0; border-top: 1px solid #e2ebdb; }
+    .walkthrough-step code { display: block; color: #334e2e; font-size: 11px; }
+    .walkthrough-step p { margin: 4px 0 0; color: #657365; font-size: 11px; line-height: 1.5; }
+    .walkthrough-button { grid-column: 2; grid-row: 1 / span 2; padding: 8px 10px; color: #304b29; background: #dcedcf; border: 0; border-radius: 9px; cursor: pointer; font-size: 10px; font-weight: 800; }
+    .walkthrough-button:disabled { color: #869187; background: #e8eee4; cursor: default; }
+    .walkthrough-result { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 11px; margin-top: 6px; background: white; border-radius: 10px; font-size: 11px; }
+    .walkthrough-result strong { font-size: 18px; }
+    .walkthrough-status { display: block; min-height: 16px; margin-top: 7px; color: #557a45; font-size: 10px; }
+    .script-output pre { padding: 8px 0 0; color: #334e2e; font-size: 11px; }
+    .code-box { margin: 15px 0 21px; overflow: hidden; background: #182b36; border-radius: 14px; color: #e8f4ec; }
+    .code-head { display: flex; align-items: center; justify-content: space-between; padding: 11px 15px; border-bottom: 1px solid rgba(255,255,255,.1); color: #afc0c5; font-size: 10px; }
+    .dots { display: flex; gap: 5px; }
+    .dots i { width: 7px; height: 7px; border-radius: 50%; background: #ef9b82; }
+    .dots i:nth-child(2) { background: #f2d077; }
+    .dots i:nth-child(3) { background: #9bd680; }
+    pre { margin: 0; padding: 17px 18px; overflow-x: auto; font: 12px/1.8 ui-monospace, SFMono-Regular, Consolas, monospace; white-space: pre-wrap; }
+    .code-comment { color: #8ba39a; }
+    .notes-box { margin: 17px 0 20px; padding: 14px; background: #f7f8ff; border: 1px solid #e8e8f4; border-radius: 14px; }
+    .notes-box label { display: block; margin-bottom: 8px; font-size: 12px; font-weight: 800; }
+    .notes-box textarea { display: block; width: 100%; min-height: 88px; padding: 11px 12px; color: var(--ink); background: white; border: 1px solid #e2e4ed; border-radius: 10px; font: inherit; font-size: 12px; line-height: 1.55; resize: vertical; }
+    .notes-box textarea:focus { outline: 2px solid #aeb8ef; outline-offset: 1px; }
+    .notes-status { display: block; min-height: 14px; margin-top: 6px; color: var(--muted); font-size: 10px; }
+    .practice-box { padding: 15px; margin: 18px 0; background: #eef7ff; border: 1px solid #dfebf7; border-radius: 14px; }
+    .practice-top { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+    .practice-title { font-size: 12px; font-weight: 850; }
+    .practice-xp { color: #52779c; font-size: 10px; font-weight: 800; white-space: nowrap; }
+    .practice-box label { display: block; margin-bottom: 9px; color: #526674; font-size: 12px; line-height: 1.55; }
+    .practice-box textarea { display: block; width: 100%; min-height: 74px; padding: 10px 11px; color: var(--ink); background: white; border: 1px solid #dce5ee; border-radius: 10px; font: 12px/1.6 ui-monospace, SFMono-Regular, Consolas, monospace; resize: vertical; }
+    .practice-box textarea:focus { outline: 2px solid #9fc1e4; outline-offset: 1px; }
+    .practice-bottom { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 9px; }
+    .practice-check { padding: 8px 11px; color: #23435d; background: #d7ebff; border: 0; border-radius: 9px; cursor: pointer; font-size: 11px; font-weight: 800; }
+    .practice-check:hover { background: #c7e2fc; }
+    .practice-feedback { color: #557a45; font-size: 11px; font-weight: 700; }
+    .practice-feedback.wrong { color: #b2594d; }
+    .challenge { padding-top: 19px; border-top: 1px solid var(--line); }
+    .challenge-kicker { color: #956625; font-size: 10px; font-weight: 850; letter-spacing: 1.1px; text-transform: uppercase; }
+    .challenge h4 { margin: 7px 0 13px; font-size: 15px; letter-spacing: -.25px; }
+    .answers { display: grid; gap: 8px; }
+    .answer { display: flex; align-items: center; gap: 10px; width: 100%; padding: 11px 12px; text-align: left; color: var(--ink); border: 1px solid var(--line); border-radius: 11px; background: white; cursor: pointer; font-size: 12px; line-height: 1.45; transition: border-color .15s, background .15s; }
+    .answer:hover:not(:disabled) { border-color: #9bca73; background: #f9fcf6; }
+    .answer:disabled { cursor: default; }
+    .answer.correct { border-color: #8cc65f; background: #f1fae8; }
+    .answer.incorrect { border-color: #e5a79e; background: #fff3f1; }
+    .answer-letter { width: 23px; height: 23px; display: grid; place-items: center; flex: 0 0 23px; background: #f1f3ef; border-radius: 7px; color: #68777c; font-size: 10px; font-weight: 800; }
+    .feedback { min-height: 22px; margin-top: 10px; color: #5b7f43; font-size: 12px; font-weight: 700; line-height: 1.5; }
+    .feedback.wrong { color: #b2594d; }
+    .lesson-footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 13px; }
+    .small-hint { color: var(--muted); font-size: 10px; line-height: 1.5; }
+    .next-button { padding: 10px 14px; color: #20351a; background: var(--green); border: 0; border-radius: 10px; cursor: pointer; font-size: 11px; font-weight: 800; }
+    .next-button:hover { background: #a7e65b; }
+    .next-button:disabled { color: #8b9691; background: #edf0ea; cursor: default; }
+    .side-column { display: grid; gap: 13px; }
+    .side-card { padding: 17px; }
+    .side-card h3 { margin: 0 0 12px; font-size: 13px; }
+    .next-list { display: grid; gap: 7px; }
+    .next-lesson { display: flex; align-items: center; gap: 9px; width: 100%; padding: 9px 8px; text-align: left; border: 0; border-radius: 10px; background: transparent; cursor: pointer; }
+    .next-lesson:hover { background: #f5f8f2; }
+    .next-lesson.active { background: #f1f7e9; }
+    .next-lesson .tiny-icon { display: grid; place-items: center; width: 27px; height: 27px; flex: 0 0 27px; background: #f0f3ee; border-radius: 8px; font-size: 13px; }
+    .next-lesson span:last-child { min-width: 0; }
+    .next-lesson strong { display: block; overflow: hidden; color: var(--ink); font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+    .next-lesson small { display: block; margin-top: 3px; color: var(--muted); font-size: 9px; }
+    .tip-card { background: #fff7e9; border-color: #f5ead5; }
+    .tip-card h3 { display: flex; gap: 7px; align-items: center; }
+    .tip-card p { margin: 0; color: #75694f; font-size: 11px; line-height: 1.6; }
+    .bottom-note { margin: 21px 0 0; text-align: center; color: #86928e; font-size: 10px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    @media (max-width: 940px) {
+      .app { padding: 17px 18px 30px; }
+      .layout { grid-template-columns: 1fr; gap: 16px; }
+      .sidebar { position: static; padding: 12px; }
+      .side-heading, .side-divider, .mini-progress { display: none; }
+      .sidebar nav { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+      .path-button { justify-content: center; padding: 8px 5px; margin: 0; font-size: 11px; }
+      .path-icon { width: 26px; height: 26px; }
+    }
+    @media (max-width: 650px) {
+      .app { padding: 12px 12px 25px; }
+      .topbar { margin-bottom: 14px; }
+      .brand { font-size: 17px; }
+      .top-right { gap: 8px; }
+      .fullscreen-button { width: 35px; height: 35px; justify-content: center; padding: 0; }
+      .fullscreen-label { display: none; }
+      .language-button { width: 35px; height: 35px; padding: 0; font-size: 0; }
+      .language-button:after { content: attr(data-short); font-size: 10px; }
+      .streak { padding: 8px 9px; font-size: 11px; }
+      .avatar { width: 35px; height: 35px; }
+      .welcome { min-height: 0; padding: 23px 20px; border-radius: 19px; }
+      .welcome p { font-size: 12px; }
+      .hero-art { width: 68px; height: 68px; flex-basis: 68px; border-radius: 22px; font-size: 34px; }
+      .stats { gap: 7px; margin: 11px 0 21px; }
+      .stat { display: block; padding: 10px; text-align: center; border-radius: 13px; }
+      .stat-icon { width: 29px; height: 29px; margin: 0 auto 6px; border-radius: 9px; font-size: 14px; }
+      .stat strong { font-size: 15px; }
+      .stat small { font-size: 9px; }
+      .lesson-layout { grid-template-columns: 1fr; }
+      .lesson-card { padding: 19px; }
+      .lesson-card h3 { font-size: 22px; }
+      .side-column { grid-template-columns: 1fr; }
+      .section-heading h2 { font-size: 18px; }
+    }
+    @media (max-width: 390px) {
+      .hero-art { display: none; }
+      .top-right .streak { display: none; }
+      .lesson-footer { align-items: flex-start; flex-direction: column; }
+      .next-button { align-self: flex-end; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">⌘</span> Code Quest</div>
+      <div class="top-right">
+        <button class="fullscreen-button" id="fullscreen-toggle" type="button" aria-label="View full screen" title="View full screen (or press F11)">
+          <span class="fullscreen-icon" aria-hidden="true">⛶</span><span class="fullscreen-label">Full screen</span>
+        </button>
+        <button class="language-button" id="language-toggle" type="button" aria-label="Switch language"><span class="language-label">English</span></button>
+        <div class="streak" aria-label="Your points"><span aria-hidden="true">⚡</span><span id="top-xp">0 XP</span></div>
+        <div class="avatar" aria-label="Himesh">H</div>
+      </div>
+    </header>
+    <span class="sr-only" id="fullscreen-status" role="status" aria-live="polite"></span>
+
+    <div class="layout">
+      <aside class="sidebar" aria-label="Learning paths">
+        <div class="side-heading" id="paths-heading">Choose your level</div>
+        <nav>
+          <button class="path-button active" data-level="all"><span class="path-icon">✨</span> <span class="path-label">All levels</span><span class="path-lock" aria-hidden="true"></span></button>
+          <button class="path-button" data-level="zero"><span class="path-icon">🌱</span> <span class="path-label">Zero level</span><span class="path-lock" aria-hidden="true"></span></button>
+          <button class="path-button" data-level="beginner"><span class="path-icon">🟢</span> <span class="path-label">Beginner</span><span class="path-lock" aria-hidden="true"></span></button>
+          <button class="path-button" data-level="intermediate"><span class="path-icon">🔵</span> <span class="path-label">Intermediate</span><span class="path-lock" aria-hidden="true"></span></button>
+          <button class="path-button" data-level="expert"><span class="path-icon">🛡️</span> <span class="path-label">Level 3 · Expert path</span><span class="path-lock" aria-hidden="true"></span></button>
+        </nav>
+        <p class="unlock-note" id="unlock-note">Complete every challenge in a level to unlock the next one.</p>
+        <div class="side-divider"></div>
+        <div class="mini-progress">
+          <div class="mini-progress-top"><span id="progress-label">Your progress</span><span id="side-progress">0%</span></div>
+          <div class="bar" role="progressbar" aria-label="Course progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="side-bar"><div class="bar-fill" id="side-fill"></div></div>
+          <div class="mini-note" id="side-note">Every little step counts. You’ve got this!</div>
+        </div>
+      </aside>
+
+      <main class="main">
+        <section class="welcome" aria-labelledby="welcome-title">
+          <div class="welcome-content">
+            <div class="eyebrow" id="welcome-eyebrow">Start from the very beginning</div>
+            <h1 id="welcome-title">Hey Himesh, let’s learn the basics!</h1>
+            <p id="welcome-description">Never coded before? Perfect. Start with what code means, then learn one new idea at a time. No need to memorize anything.</p>
+          </div>
+          <div class="hero-art" aria-hidden="true">🚀</div>
+        </section>
+
+        <section class="stats" aria-label="Your learning stats" id="stats-section">
+          <div class="stat"><div class="stat-icon" aria-hidden="true">⚡</div><div><strong id="xp-count">0</strong><small id="xp-label">XP earned</small></div></div>
+          <div class="stat"><div class="stat-icon" aria-hidden="true">🎯</div><div><strong id="lesson-count">0 / 19</strong><small id="lessons-label">Lessons done</small></div></div>
+          <div class="stat"><div class="stat-icon" aria-hidden="true">🏅</div><div><strong id="level-name">Rookie</strong><small id="level-label">Your level</small></div></div>
+        </section>
+
+        <div class="section-heading">
+          <div><h2 id="section-title">Start here: the very first step</h2><p id="section-description">Small steps, plain words, no experience needed.</p></div>
+          <button class="text-button" id="reset-progress" type="button">Reset progress</button>
+        </div>
+
+        <div class="lesson-layout">
+          <article class="lesson-card" id="lesson-card" aria-live="polite"></article>
+          <aside class="side-column">
+            <section class="side-card">
+              <h3 id="next-steps-title">🗺️ Your next steps</h3>
+              <div class="next-list" id="next-list"></div>
+            </section>
+            <section class="side-card tip-card">
+              <h3 id="tip-title"><span aria-hidden="true">💡</span> Quest tip</h3>
+              <p id="tip-description">Making mistakes is part of coding! Developers try, learn what happened, and try again. That’s how you level up.</p>
+            </section>
+          </aside>
+        </div>
+        <p class="bottom-note" id="bottom-note">Your progress saves on this device. Click <strong>Full screen</strong> above or press <strong>F11</strong> to fill your screen.</p>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const lessons = [
+      {
+        id: "basics", level: "zero", path: "web", icon: "🌱", label: "Start here", title: "What is coding?",
+        intro: "Coding means writing instructions for a computer. A computer follows those instructions one step at a time—kind of like following a recipe.",
+        ideaTitle: "You already know how to give instructions",
+        idea: "“Open the game, then press Play” is a set of instructions. Code is how we give computers instructions they can follow.",
+        code: '<span class="code-comment">A simple plan for a computer:</span>\n1. Take a message\n2. Show the message\n\n<span class="code-comment">That’s the idea behind a program!</span>',
+        breakdown: [
+          { part: "Coding", meaning: "Writing instructions for a computer to follow." },
+          { part: "Computer", meaning: "A machine that follows instructions very carefully." },
+          { part: "Code", meaning: "Instructions written in a way a computer can understand." },
+          { part: "Program", meaning: "A group of instructions that work together to do a task." }
+        ],
+        question: "What does coding mean?",
+        answers: ["Giving a computer instructions", "Fixing a computer screen", "Playing a game"],
+        correct: 0,
+        explain: "Exactly! Code is a set of instructions that tells a computer what to do. You just learned your first coding idea!",
+        practice: {
+          kind: "steps",
+          prompt: "Write two simple steps you could tell a computer to do, one step on each line.",
+          placeholder: "1. Open a game\n2. Press Play",
+          hint: "Try writing two short steps, one per line.",
+          success: "Great! You wrote a small set of instructions.",
+          hinglish: {
+            prompt: "Computer ko do simple instructions likho, har instruction alag line par.",
+            placeholder: "1. Game kholo\n2. Play dabao",
+            hint: "Do chhote steps likho, har step alag line par.",
+            success: "Bahut badhiya! Tumne instructions likhe."
+          }
+        },
+        hinglish: {
+          label: "Yahan se shuru",
+          title: "Coding kya hoti hai?",
+          intro: "Coding ka matlab hai computer ko instructions dena. Computer un instructions ko ek-ek karke follow karta hai—bilkul recipe follow karne jaisa.",
+          ideaTitle: "Tum pehle se instructions dena jaante ho",
+          idea: "“Game kholo, phir Play dabao” ek instruction hai. Code se hum computer ko aise instructions dete hain jo woh follow kar sake.",
+          code: '<span class="code-comment">Computer ke liye ek simple plan:</span>\n1. Ek message lo\n2. Message ko screen par dikhao\n\n<span class="code-comment">Program ka basic idea yahi hai!</span>',
+          breakdown: [
+            { part: "Coding", meaning: "Computer ke liye instructions likhna." },
+            { part: "Computer", meaning: "Ek machine jo instructions ko dhyaan se follow karti hai." },
+            { part: "Code", meaning: "Aise likhe instructions jinhe computer samajh sake." },
+            { part: "Program", meaning: "Instructions ka group jo milkar koi kaam karta hai." }
+          ],
+          question: "Coding ka kya matlab hai?",
+          answers: ["Computer ko instructions dena", "Computer ki screen theek karna", "Game khelna"],
+          explain: "Bilkul! Code instructions ka set hota hai jo computer ko batata hai kya karna hai. Tumne apna pehla coding idea seekh liya!"
+        }
+      },
+      {
+        id: "html", level: "zero", path: "web", icon: "🧱", label: "Web coding", title: "Put words on a web page",
+        intro: "A web page is a page you see on a website. HTML is a way to label what goes on that page. Your browser (like Chrome) reads those labels and shows the page.",
+        ideaTitle: "HTML labels the words",
+        idea: "The &lt;p&gt; label means “this is a paragraph.” The first tag starts it, and &lt;/p&gt; ends it. The words in the middle are what you see.",
+        code: '<span class="code-comment">This tells the browser to show a paragraph:</span>\n&lt;p&gt;Hello, Himesh!&lt;/p&gt;',
+        breakdown: [
+          { part: "HTML", meaning: "The language used to put and label content on a web page." },
+          { part: "Tag", meaning: "A label inside angle brackets that tells the browser what something is." },
+          { part: "&lt;p&gt;", meaning: "The opening paragraph tag: it tells the browser a paragraph starts here." },
+          { part: "&lt;/p&gt;", meaning: "The closing tag: it tells the browser the paragraph ends here." },
+          { part: "Browser", meaning: "An app, like Chrome, that opens websites and shows web pages." }
+        ],
+        question: "What is HTML used for?",
+        answers: ["Telling a web page what parts to show", "Choosing your computer’s password", "Making the computer louder"],
+        correct: 0,
+        explain: "Right! HTML labels the parts of a web page, like words, headings, and pictures.",
+        practice: {
+          kind: "html",
+          prompt: "Write one HTML line to show the words “Hello Himesh!” as a paragraph.",
+          placeholder: "<p>Hello Himesh!</p>",
+          hint: "Start with <p>, put the words next, and finish with </p>.",
+          success: "Nice! You made a paragraph with an opening and closing tag.",
+          hinglish: {
+            prompt: "“Hello Himesh!” ko paragraph ki tarah dikhane ke liye ek HTML line likho.",
+            placeholder: "<p>Hello Himesh!</p>",
+            hint: "<p> se shuru karo, beech mein words likho, aur </p> se khatam karo.",
+            success: "Shabash! Tumne opening aur closing tag ke saath paragraph banaya."
+          }
+        },
+        hinglish: {
+          label: "Web coding",
+          title: "Web page par words dikhana",
+          intro: "Web page woh page hai jo website par dikhai deta hai. HTML se hum page ke parts ko label karte hain. Browser (jaise Chrome) labels padhkar page dikhata hai.",
+          ideaTitle: "HTML words ko label karta hai",
+          idea: "&lt;p&gt; label ka matlab hai “yeh paragraph hai.” Pehla tag shuru karta hai aur &lt;/p&gt; khatam. Beech ke words screen par dikhte hain.",
+          code: '<span class="code-comment">Browser ko paragraph dikhane ke liye:</span>\n&lt;p&gt;Hello, Himesh!&lt;/p&gt;',
+          breakdown: [
+            { part: "HTML", meaning: "Web page par content rakhne aur label karne ki language." },
+            { part: "Tag", meaning: "Angle brackets ke andar label, jo browser ko batata hai yeh cheez kya hai." },
+            { part: "&lt;p&gt;", meaning: "Opening paragraph tag: yahan se paragraph shuru hota hai." },
+            { part: "&lt;/p&gt;", meaning: "Closing tag: yahan paragraph khatam hota hai." },
+            { part: "Browser", meaning: "Chrome jaisi app jo websites kholkar web pages dikhati hai." }
+          ],
+          question: "HTML kis kaam aata hai?",
+          answers: ["Web page ke parts dikhane ke liye", "Computer ka password chunne ke liye", "Computer ki awaaz badhane ke liye"],
+          explain: "Sahi! HTML web page ke parts ko label karta hai, jaise words, headings aur pictures."
+        }
+      },
+      {
+        id: "css", level: "zero", path: "web", icon: "🎨", label: "Web coding", title: "Make it stylish with CSS",
+        intro: "CSS means Cascading Style Sheets. It is the language that controls how a web page looks. Use it for colors, text size, and spacing. Without CSS, a page still works, but looks plain—like a room before you decorate it.",
+        ideaTitle: "CSS gives style instructions",
+        idea: "HTML puts the words and parts on a page; CSS changes how those parts look. In this example, the main heading becomes green. You can change the style without changing the words.",
+        code: '<span class="code-comment">Make the heading green:</span>\nh1 {\n  color: green;\n}',
+        breakdown: [
+          { part: "CSS", meaning: "The style language. It tells the browser how parts of a page should look." },
+          { part: "h1", meaning: "The selector: it chooses what to style. Here it selects the main heading." },
+          { part: "{ }", meaning: "The braces hold the style instructions for the selected part." },
+          { part: "color", meaning: "The property: which part of the look should change." },
+          { part: "green", meaning: "The value: the new color we want." },
+          { part: ";", meaning: "The semicolon marks the end of this style instruction." }
+        ],
+        question: "What color will the heading be?",
+        answers: ["Green", "Blue", "Red"],
+        correct: 0,
+        explain: "Exactly! The heading will be green. `color` is the instruction that chooses its text color.",
+        practice: {
+          kind: "css",
+          prompt: "Write the CSS line that makes text green.",
+          placeholder: "color: green;",
+          hint: "Use the word color, a colon, green, and a semicolon.",
+          success: "Correct! This CSS line sets the text color to green.",
+          hinglish: {
+            prompt: "Text ko green karne wali CSS line likho.",
+            placeholder: "color: green;",
+            hint: "color likho, phir colon, green, aur aakhir mein semicolon.",
+            success: "Sahi! Is CSS line se text green ho jaata hai."
+          }
+        },
+        hinglish: {
+          label: "Web coding",
+          title: "CSS se style karna",
+          intro: "CSS ka full form Cascading Style Sheets hai. Yeh web page ka look badalne wali language hai. Isse color, text ka size aur spacing badal sakte ho. CSS na ho toh page chal sakta hai, par bilkul saada dikhega—jaise bina sajawat ka kamra.",
+          ideaTitle: "CSS batata hai cheezein kaisi dikhein",
+          idea: "HTML page par words aur parts rakhta hai; CSS unka look badalta hai. Is example mein main heading green ho jaati hai. Words badle bina style badal sakte ho.",
+          code: '<span class="code-comment">Heading ko green karo:</span>\nh1 {\n  color: green;\n}',
+          breakdown: [
+            { part: "CSS", meaning: "Style ki language. Browser ko batati hai ki page ke parts kaise dikhne chahiye." },
+            { part: "h1", meaning: "Selector: yeh chunta hai kis cheez ka style badalna hai. Yahan main heading chuni gayi hai." },
+            { part: "{ }", meaning: "In braces ke andar style ke instructions likhe jaate hain." },
+            { part: "color", meaning: "Property: look ki kaunsi cheez badalni hai." },
+            { part: "green", meaning: "Value: naya color jo hum chahte hain." },
+            { part: ";", meaning: "Semicolon batata hai ki yeh style instruction khatam hua." }
+          ],
+          question: "Heading kaunsa color hoga?",
+          answers: ["Green", "Blue", "Red"],
+          explain: "Bilkul! Heading green hogi. `color` batata hai ki text ka color kya ho."
+        }
+      },
+      {
+        id: "javascript", level: "zero", path: "web", icon: "⚙️", label: "Web coding", title: "Give a page actions",
+        intro: "JavaScript is a set of instructions that can make a web page do things. For example, it can react when you press a button or keep score in a game.",
+        ideaTitle: "A named box can remember a score",
+        idea: "The word `score` is a name for a number we want to remember. The computer adds 1, so the score goes from 1 to 2.",
+        code: '<span class="code-comment">Start with 1 point, then add 1:</span>\nlet score = 1;\nscore = score + 1;',
+        breakdown: [
+          { part: "JavaScript", meaning: "A coding language that tells a web page what to do when something happens." },
+          { part: "let", meaning: "A word that creates a named place to store a value." },
+          { part: "score", meaning: "The name of the place where we keep the game score." },
+          { part: "=", meaning: "Put the value on the right into the named place on the left." },
+          { part: "+ 1", meaning: "Add one point to the score." },
+          { part: ";", meaning: "Marks the end of an instruction." }
+        ],
+        question: "If your score is 1 and you add 1, what is it now?",
+        answers: ["1", "2", "3"],
+        correct: 1,
+        explain: "Correct! We added 1 to 1, so the score is now 2.",
+        practice: {
+          kind: "number",
+          prompt: "If a game score is 3 and you add 1 point, what is the new score?",
+          placeholder: "Type the number, for example 4",
+          hint: "Count one step forward from 3.",
+          success: "Yes! The new score is 4.",
+          hinglish: {
+            prompt: "Game ka score 3 hai. Ek point aur mile toh naya score kya hoga?",
+            placeholder: "Number likho, jaise 4",
+            hint: "3 ke baad agla number socho.",
+            success: "Bilkul! Naya score 4 hoga."
+          }
+        },
+        hinglish: {
+          label: "Web coding",
+          title: "Web page ko kaam karwana",
+          intro: "JavaScript instructions ka ek set hai jo web page par actions karwa sakta hai. Jaise button dabane par kuch karna ya game ka score rakhna.",
+          ideaTitle: "Naam wala box score yaad rakhta hai",
+          idea: "`score` ek naam hai jisme hum number rakhte hain. Computer 1 jodta hai, toh score 1 se 2 ho jaata hai.",
+          code: '<span class="code-comment">1 point se shuru karo, phir 1 jodo:</span>\nlet score = 1;\nscore = score + 1;',
+          breakdown: [
+            { part: "JavaScript", meaning: "Coding language jo web page ko batati hai ki kya karna hai." },
+            { part: "let", meaning: "Naam wala box banane ka word, jisme koi value rakh sakte hain." },
+            { part: "score", meaning: "Us box ka naam jisme game ka score rakha hai." },
+            { part: "=", meaning: "Right side ki value ko left side ke naam mein rakho." },
+            { part: "+ 1", meaning: "Score mein ek point aur jodo." },
+            { part: ";", meaning: "Batata hai ki instruction yahan khatam hua." }
+          ],
+          question: "Score 1 hai aur tum 1 jodte ho. Ab score kya hai?",
+          answers: ["1", "2", "3"],
+          explain: "Sahi! Humne 1 mein 1 joda, isliye score ab 2 hai."
+        }
+      },
+      {
+        id: "debug", level: "zero", path: "web", icon: "🕵️", label: "Web coding", title: "Become a bug detective",
+        intro: "A bug is a mistake in instructions that makes a computer do the wrong thing. Finding and fixing a bug is called debugging. Every coder does it!",
+        ideaTitle: "Look for what is missing",
+        idea: "When code shows words, quotation marks go around those words. They need to match—one at the start and one at the end.",
+        code: 'let message = "Hello!;\n<span class="code-comment">// Uh-oh: the closing quote is missing</span>',
+        breakdown: [
+          { part: "Bug", meaning: "A mistake in code that makes the computer do something unexpected." },
+          { part: "Debugging", meaning: "Finding and fixing the mistake." },
+          { part: '" "', meaning: "Quotation marks show where a piece of text starts and ends." },
+          { part: '";', meaning: "The fixed line needs the missing closing quote before the semicolon." }
+        ],
+        question: "What should you add to fix the code?",
+        answers: ["A closing quote after the !", "Another let", "A number at the end"],
+        correct: 0,
+        explain: "Nice debugging! Add a closing quote after the exclamation mark: `let message = \"Hello!\";`",
+        practice: {
+          kind: "debug",
+          prompt: "Fix this line by adding the missing quote: let message = \"Hi!;",
+          placeholder: 'let message = "Hi!";',
+          hint: "Add a quotation mark after the exclamation point.",
+          success: "Bug fixed! The opening and closing quotes now match.",
+          hinglish: {
+            prompt: "Is line mein missing quote jodkar theek karo: let message = \"Hi!;",
+            placeholder: 'let message = "Hi!";',
+            hint: "Exclamation point ke baad ek closing quote lagao.",
+            success: "Bug theek! Ab shuru aur aakhir ke quotes match karte hain."
+          }
+        },
+        hinglish: {
+          label: "Web coding",
+          title: "Code mein galti dhoondhna",
+          intro: "Bug code ki ek galti hoti hai jiski wajah se computer galat kaam karta hai. Galti dhoondhkar theek karna debugging kehlata hai. Har coder yeh karta hai!",
+          ideaTitle: "Dekho kya missing hai",
+          idea: "Jab code words dikhata hai, toh un words ke aage-peeche quotation marks lagte hain. Shuru aur aakhir ke quotes match hone chahiye.",
+          code: 'let message = "Hello!;\n<span class="code-comment">// Arre! Aakhri quote missing hai</span>',
+          breakdown: [
+            { part: "Bug", meaning: "Code ki galti jiski wajah se computer kuch unexpected karta hai." },
+            { part: "Debugging", meaning: "Galti ko dhoondhkar theek karna." },
+            { part: '" "', meaning: "Quotation marks batate hain ki text kahan shuru aur khatam hota hai." },
+            { part: '";', meaning: "Theek line mein semicolon se pehle closing quote hona chahiye." }
+          ],
+          question: "Is code ko theek karne ke liye kya jodna hoga?",
+          answers: ["! ke baad closing quote", "Ek aur let", "Aakhir mein ek number"],
+          explain: "Badhiya debugging! Exclamation mark ke baad closing quote lagao: `let message = \"Hello!\";`"
+        }
+      },
+      {
+        id: "prompts", level: "beginner", path: "ai", icon: "💬", label: "AI prompts", title: "Talk to AI with a prompt",
+        intro: "AI is a computer tool that can answer questions and help with ideas. A prompt is the message you give it. Clear details help it understand what you want.",
+        ideaTitle: "Be clear about your goal",
+        idea: "AI can make mistakes, so check important answers. Instead of “tell me about space,” say what you want to learn and how you want the answer.",
+        code: '<span class="code-comment">A clearer prompt:</span>\n"Explain how planets orbit the Sun\nin 3 simple sentences for a beginner."',
+        breakdown: [
+          { part: "AI", meaning: "A computer tool trained on examples that can create answers and ideas." },
+          { part: "Prompt", meaning: "The message or question you send to an AI tool." },
+          { part: "Topic", meaning: "What you want to know about—in this example, how planets move." },
+          { part: "Extra detail", meaning: "Say how long or how simple you want the answer to be." },
+          { part: "Check answers", meaning: "AI can get things wrong, so check important information." }
+        ],
+        question: "Which prompt is more helpful if you want a short, easy explanation?",
+        answers: ["Tell me about planets.", "Explain planets in 3 simple sentences for a beginner.", "Planets?"],
+        correct: 1,
+        explain: "Yes! It tells the AI the topic, length, and reading level.",
+        practice: {
+          kind: "space-prompt",
+          prompt: "Write a clear AI question about space. Ask for a simple or easy explanation.",
+          placeholder: "Explain space in a simple way for a beginner.",
+          hint: "Mention space and ask for an easy, simple, or beginner-friendly answer.",
+          success: "Great prompt! You gave AI a topic and explained how you want the answer.",
+          hinglish: {
+            prompt: "Space ke baare mein AI ke liye ek clear sawaal likho. Simple ya easy explanation maango.",
+            placeholder: "Space ko beginner ke liye simple tareeke se samjhao.",
+            hint: "Space ka zikr karo aur simple, easy, ya beginner-friendly jawaab maango.",
+            success: "Badhiya prompt! Tumne topic aur jawaab kaisa chahiye, dono bataya."
+          }
+        },
+        hinglish: {
+          label: "AI prompts",
+          title: "AI se sawaal poochhna",
+          intro: "AI ek computer tool hai jo sawaalon ke jawaab aur ideas de sakta hai. AI ko bheja gaya message prompt kehlata hai. Saaf details se AI ko samajhne mein madad milti hai.",
+          ideaTitle: "Apna sawaal saaf likho",
+          idea: "AI galti kar sakta hai, isliye zaroori jawaab check karo. “Space ke baare mein batao” ki jagah batao kya seekhna hai aur jawaab kaisa chahiye.",
+          code: '<span class="code-comment">Ek clear prompt:</span>\n"Planets Sun ke around kaise ghoomte hain,\n beginner ke liye 3 simple sentences mein samjhao."',
+          breakdown: [
+            { part: "AI", meaning: "Examples se seekha computer tool jo jawaab aur ideas bana sakta hai." },
+            { part: "Prompt", meaning: "Woh message ya sawaal jo tum AI ko bhejte ho." },
+            { part: "Topic", meaning: "Tum kis baare mein pooch rahe ho—in example, planets kaise ghoomte hain." },
+            { part: "Extra detail", meaning: "Batao jawaab kitna chhota ya kitna aasaan chahiye." },
+            { part: "Jawaab check karo", meaning: "AI se galti ho sakti hai, isliye zaroori baat check karo." }
+          ],
+          question: "Chhota aur aasaan jawaab chahiye. Kaunsa prompt behtar hai?",
+          answers: ["Planets ke baare mein batao.", "Planets ko beginner ke liye 3 simple sentences mein samjhao.", "Planets?"],
+          explain: "Sahi! Ismein topic, jawaab ki length aur kis ke liye hai, sab bataya hai."
+        }
+      },
+      {
+        id: "prompt-builder", level: "beginner", path: "ai", icon: "🪄", label: "AI prompts", title: "Add details to your prompt",
+        intro: "When you ask AI for help, tell it what you want and add a useful detail. It is like asking a person for help and explaining what you need.",
+        ideaTitle: "Say what you want and add a detail",
+        idea: "For example, say what kind of game you want and how many steps to explain. You can ask a follow-up if the answer is not quite right.",
+        code: '<span class="code-comment">Vague:</span> "Make me a game."\n\n<span class="code-comment">More helpful:</span>\n"Suggest a simple guessing game for a\nbeginner, with 3 steps to build it."',
+        breakdown: [
+          { part: "Prompt", meaning: "Your instruction or question to the AI." },
+          { part: "Task", meaning: "What you want the AI to do—in this example, suggest a game." },
+          { part: "Details", meaning: "Helpful information, like who the game is for." },
+          { part: "Format", meaning: "How you want the answer—for example, in 3 steps." },
+          { part: "Follow-up", meaning: "Another question you ask to improve or clarify the answer." }
+        ],
+        question: "You want AI to suggest an easy dinner. What detail would help it give a better idea?",
+        answers: ["Ask it to use ingredients you already have", "Say “dinner” a few more times", "Leave out what you need"],
+        correct: 0,
+        explain: "Great idea! Sharing what ingredients you have gives the AI useful context.",
+        practice: {
+          kind: "dinner-prompt",
+          prompt: "Write a prompt asking for an easy dinner idea. Mention ingredients you have.",
+          placeholder: "Suggest an easy dinner using rice and eggs.",
+          hint: "Include dinner, easy or simple, and at least one ingredient.",
+          success: "Nice! Your extra details help AI give a more useful answer.",
+          hinglish: {
+            prompt: "Aasaan dinner ke idea ke liye prompt likho. Apne paas jo ingredients hain, unka naam lo.",
+            placeholder: "Rice aur eggs se ek easy dinner suggest karo.",
+            hint: "Dinner, easy ya simple, aur kam se kam ek ingredient likho.",
+            success: "Shabash! In details se AI zyada kaam ka jawaab de paayega."
+          }
+        },
+        hinglish: {
+          label: "AI prompts",
+          title: "Prompt mein details jodna",
+          intro: "AI se madad maangte waqt batao kya chahiye aur ek useful detail bhi do. Yeh kisi insaan se madad maangne jaisa hai—use samjhao ki tumhe kya chahiye.",
+          ideaTitle: "Kya chahiye aur ek detail batao",
+          idea: "Jaise kis tarah ka game chahiye aur kitne steps mein samjhana hai. Jawaab sahi na lage toh tum aur sawaal pooch sakte ho.",
+          code: '<span class="code-comment">Bahut chhota:</span> "Mere liye game banao."\n\n<span class="code-comment">Zyada clear:</span>\n"Beginner ke liye simple guessing game ke\n3 steps batao."',
+          breakdown: [
+            { part: "Prompt", meaning: "AI ko diya gaya tumhara instruction ya sawaal." },
+            { part: "Kaam", meaning: "Tum AI se kya karwana chahte ho—yahan game ka idea dena." },
+            { part: "Details", meaning: "Kaam ki jaankari, jaise game kiske liye hai." },
+            { part: "Format", meaning: "Jawaab kaisa chahiye—jaise 3 steps mein." },
+            { part: "Follow-up", meaning: "Jawaab ko behtar ya saaf karne ke liye agla sawaal." }
+          ],
+          question: "AI se aasaan dinner idea chahiye. Kaunsi detail use madad karegi?",
+          answers: ["Use batao ki tumhare paas kaunse ingredients hain", "Dinner word baar-baar bolo", "Kya chahiye woh mat batao"],
+          explain: "Badhiya! Apne ingredients batane se AI ko useful context milta hai."
+        }
+      },
+      {
+        id: "conditions", level: "beginner", path: "web", icon: "🔀", label: "Programming", title: "Let code make a choice",
+        intro: "Programs can choose what to do. A condition checks whether something is true, then the program follows the matching instruction.",
+        ideaTitle: "Like “if it rains, take an umbrella”",
+        idea: "The computer checks `score > 10`. If that is true, it shows a winner message. Otherwise, it follows the `else` part.",
+        code: '<span class="code-comment">Choose what to do based on the score:</span>\nif (score &gt; 10) {\n  badge = "Winner";\n} else {\n  badge = "Keep going";\n}',
+        breakdown: [
+          { part: "if", meaning: "Check a condition before doing something." },
+          { part: "score &gt; 10", meaning: "The condition: is the score bigger than 10?" },
+          { part: "{ }", meaning: "The instructions to run when the condition matches." },
+          { part: "else", meaning: "What to do when the condition is not true." }
+        ],
+        question: "If score is 12, which message will the program choose?",
+        answers: ["Winner", "Keep going", "It cannot choose"],
+        correct: 0,
+        explain: "Right! 12 is bigger than 10, so the program chooses Winner.",
+        practice: {
+          kind: "condition", prompt: "Write the start of an if condition that checks whether score is bigger than 10.",
+          placeholder: "if (score > 10)", hint: "Use if, then check score > 10 inside parentheses.",
+          success: "Nice! You wrote a condition the program can check.",
+          hinglish: {
+            prompt: "Aisi if condition likho jo check kare ki score 10 se bada hai.",
+            placeholder: "if (score > 10)", hint: "if likho, phir brackets mein score > 10 check karo.",
+            success: "Shabash! Tumne program ke liye condition likhi."
+          }
+        },
+        hinglish: {
+          label: "Programming", title: "Code se faisla karwana",
+          intro: "Program alag-alag faisle le sakta hai. Condition check karti hai ki koi baat sahi hai ya nahi, phir program us hisaab se kaam karta hai.",
+          ideaTitle: "Jaise “baarish ho toh chhata lo”",
+          idea: "Computer `score > 10` check karta hai. Sahi hone par Winner dikhata hai, warna `else` wala instruction chalta hai.",
+          code: '<span class="code-comment">Score ke hisaab se faisla:</span>\nif (score &gt; 10) {\n  badge = "Winner";\n} else {\n  badge = "Keep going";\n}',
+          breakdown: [
+            { part: "if", meaning: "Kuch karne se pehle condition check karo." },
+            { part: "score &gt; 10", meaning: "Condition: kya score 10 se bada hai?" },
+            { part: "{ }", meaning: "Condition sahi hone par chalne wale instructions." },
+            { part: "else", meaning: "Condition sahi na ho toh kya karna hai." }
+          ],
+          question: "Agar score 12 hai, program kya dikhayega?",
+          answers: ["Winner", "Keep going", "Program faisla nahi kar sakta"],
+          explain: "Sahi! 12, 10 se bada hai, isliye program Winner chunta hai."
+        }
+      },
+      {
+        id: "loops", level: "beginner", path: "web", icon: "🔁", label: "Programming", title: "Repeat with a loop",
+        intro: "A loop repeats an instruction. It saves you from writing the same instruction again and again.",
+        ideaTitle: "Like saying “clap 3 times”",
+        idea: "A repeat count tells the computer how many times to do a small job. A loop should have a clear stopping point.",
+        code: '<span class="code-comment">Show “Hi!” three times:</span>\nfor (let count = 0; count &lt; 3; count = count + 1) {\n  show("Hi!");\n}',
+        breakdown: [
+          { part: "for", meaning: "Starts a loop that repeats instructions." },
+          { part: "count", meaning: "Keeps track of how many repeats have happened." },
+          { part: "count &lt; 3", meaning: "Keep going while the count is less than 3." },
+          { part: "show", meaning: "The small job done each time around the loop." }
+        ],
+        question: "If a loop repeats one time, then stops at 3, how many times does it repeat?",
+        answers: ["2 times", "3 times", "10 times"],
+        correct: 1,
+        explain: "Correct! The loop repeats three times, then stops.",
+        practice: {
+          kind: "number", prompt: "A loop repeats a task 4 times. Type the number of repeats.",
+          placeholder: "Type 4", hint: "The question already gives you the repeat count.",
+          success: "Correct! You read the loop’s repeat count.",
+          hinglish: {
+            prompt: "Ek loop kaam ko 4 baar dohrata hai. Kitni baar repeat hoga?",
+            placeholder: "4 likho", hint: "Sawaal mein repeat ki ginti di hui hai.",
+            success: "Sahi! Tumne loop ki repeat ginti samajh li."
+          }
+        },
+        hinglish: {
+          label: "Programming", title: "Loop se baar-baar kaam karna",
+          intro: "Loop ek instruction ko baar-baar chalata hai. Isse ek hi instruction ko baar-baar likhna nahi padta.",
+          ideaTitle: "Jaise kehna “3 baar taali bajao”",
+          idea: "Repeat ki ginti batati hai ki computer ko kaam kitni baar karna hai. Loop ka rukne ka point saaf hona chahiye.",
+          code: '<span class="code-comment">“Hi!” ko teen baar dikhana:</span>\nfor (let count = 0; count &lt; 3; count = count + 1) {\n  show("Hi!");\n}',
+          breakdown: [
+            { part: "for", meaning: "Repeat hone wale loop ko shuru karta hai." },
+            { part: "count", meaning: "Ab tak kitni baar repeat hua, uska hisaab rakhta hai." },
+            { part: "count &lt; 3", meaning: "Jab tak ginti 3 se chhoti hai, chalte raho." },
+            { part: "show", meaning: "Har baar repeat hone par kiya jane wala chhota kaam." }
+          ],
+          question: "Loop 1 se shuru hokar 3 tak chalta hai. Kitni baar repeat hoga?",
+          answers: ["2 baar", "3 baar", "10 baar"],
+          explain: "Sahi! Loop teen baar chalta hai, phir ruk jaata hai."
+        }
+      },
+      {
+        id: "functions", level: "beginner", path: "web", icon: "📦", label: "Programming", title: "Make a reusable function",
+        intro: "A function is a named group of instructions. Write it once, then ask the program to run it whenever you need it.",
+        ideaTitle: "Like saving a recipe to use again",
+        idea: "Here, `greet` is the function’s name. Calling `greet()` runs the instructions inside it.",
+        code: '<span class="code-comment">Save a greeting, then use it:</span>\nfunction greet() {\n  show("Hello!");\n}\ngreet();',
+        breakdown: [
+          { part: "function", meaning: "Tells the computer you are making a reusable group of instructions." },
+          { part: "greet", meaning: "The name you choose for this function." },
+          { part: "{ }", meaning: "The instructions that belong to this function." },
+          { part: "greet()", meaning: "Runs the function." }
+        ],
+        question: "What does `greet()` do in this example?",
+        answers: ["Runs the greeting instructions", "Deletes the function", "Changes the computer’s name"],
+        correct: 0,
+        explain: "Exactly! Writing `greet()` tells the program to run that function.",
+        practice: {
+          kind: "function-call", prompt: "Type the function call that runs the greeting named greet.",
+          placeholder: "greet()", hint: "Use the function name and parentheses.",
+          success: "Nice! You called the function.",
+          hinglish: {
+            prompt: "greet naam ki greeting function chalane ke liye uska call likho.",
+            placeholder: "greet()", hint: "Function ka naam aur uske baad parentheses likho.",
+            success: "Badhiya! Tumne function call kiya."
+          }
+        },
+        hinglish: {
+          label: "Programming", title: "Function ko baar-baar use karna",
+          intro: "Function instructions ka ek named group hota hai. Ise ek baar likho, phir jab zaroorat ho program se chalao.",
+          ideaTitle: "Jaise recipe ko dobara use karna",
+          idea: "Yahan `greet` function ka naam hai. `greet()` likhne se uske andar ke instructions chalte hain.",
+          code: '<span class="code-comment">Greeting save karo, phir use karo:</span>\nfunction greet() {\n  show("Hello!");\n}\ngreet();',
+          breakdown: [
+            { part: "function", meaning: "Computer ko batata hai ki reusable instructions ka group ban raha hai." },
+            { part: "greet", meaning: "Function ka chuna hua naam." },
+            { part: "{ }", meaning: "Is function ke instructions yahan hote hain." },
+            { part: "greet()", meaning: "Function ko chalata hai." }
+          ],
+          question: "Is example mein `greet()` kya karta hai?",
+          answers: ["Greeting wale instructions chalata hai", "Function mita deta hai", "Computer ka naam badalta hai"],
+          explain: "Bilkul! `greet()` likhne se program function chalata hai."
+        }
+      },
+      {
+        id: "python", level: "beginner", path: "web", icon: "🐍", label: "Programming", title: "Make your first script",
+        intro: "Python is a programming language. A script is a file where you save instructions for the computer. Save Python code in a file ending with `.py`, such as `hello.py`. Running a real Python file needs Python installed; the buttons below safely act out the script inside this lesson.",
+        ideaTitle: "A script is like a saved recipe",
+        idea: "Each line is one instruction. Python reads the lines from top to bottom. `print` tells Python to show words on the screen.",
+        code: '<span class="code-comment">File name: hello.py</span>\nprint("Hello, Himesh!")\nprint("I am learning Python.")',
+        breakdown: [
+          { part: "Script", meaning: "A file containing instructions that Python can run, one line at a time." },
+          { part: "hello.py", meaning: "The file name. `.py` tells us this file contains Python code." },
+          { part: "print", meaning: "A Python instruction that displays something on the screen." },
+          { part: "( )", meaning: "Holds the words we want `print` to show." },
+          { part: '" "', meaning: "Marks the words as text, so Python shows them as written." }
+        ],
+        question: "What does a Python script do when it runs?",
+        answers: ["Follows its instructions, from top to bottom", "Only changes the computer's wallpaper", "Automatically fixes every mistake"],
+        correct: 0,
+        explain: "Right! Python follows the script's instructions one line at a time, from top to bottom.",
+        practice: {
+          kind: "python-print", prompt: "Write a Python line that shows the word Hi!",
+          placeholder: 'print("Hi!")', hint: "Start with print and put Hi! in quotation marks inside parentheses.",
+          success: "Great! That is a Python print instruction.",
+          hinglish: {
+            prompt: "Python mein Hi! word dikhane wali line likho.",
+            placeholder: 'print("Hi!")', hint: "print likho aur parentheses ke andar Hi! ko quotes mein rakho.",
+            success: "Bahut badhiya! Yeh Python ka print instruction hai."
+          }
+        },
+        hinglish: {
+          label: "Programming", title: "Apni pehli script banao",
+          intro: "Python ek programming language hai. Script ek file hoti hai jisme computer ke instructions save karte hain. Python code ko `.py` par khatam hone wali file mein save karo, jaise `hello.py`. Asli Python file chalane ke liye Python install hona chahiye; neeche ke buttons is lesson ke andar script ko safely chala kar dikhate hain.",
+          ideaTitle: "Script saved recipe jaisi hoti hai",
+          idea: "Har line ek instruction hai. Python lines ko upar se neeche padhta hai. `print` Python se screen par words dikhane ko kehta hai.",
+          code: '<span class="code-comment">File ka naam: hello.py</span>\nprint("Hello, Himesh!")\nprint("I am learning Python.")',
+          breakdown: [
+            { part: "Script", meaning: "Instructions wali file jise Python ek-ek line karke chala sakta hai." },
+            { part: "hello.py", meaning: "File ka naam. `.py` batata hai ki is file mein Python code hai." },
+            { part: "print", meaning: "Python ka instruction jo screen par kuch dikhata hai." },
+            { part: "( )", meaning: "Jin words ko `print` se dikhana hai, woh yahan aate hain." },
+            { part: '" "', meaning: "Words ko text batata hai, taaki Python unhe waise hi dikhaye." }
+          ],
+          question: "Python script chalne par kya karti hai?",
+          answers: ["Instructions ko upar se neeche follow karti hai", "Sirf computer ka wallpaper badalti hai", "Har galti apne aap theek karti hai"],
+          explain: "Sahi! Python script ke instructions ko ek-ek line karke upar se neeche chalata hai."
+        }
+      },
+      {
+        id: "arrays", level: "intermediate", path: "web", icon: "📋", label: "Programming", title: "Keep things in a list",
+        intro: "An array (often called a list) keeps several related items together under one name. This is handy for game scores, names, or colors.",
+        ideaTitle: "A list is like numbered boxes",
+        idea: "In many languages, the first item is at position 0. So `colors[0]` means the first color in the list.",
+        code: '<span class="code-comment">Keep two colors in one list:</span>\nlet colors = ["red", "blue"];\nshow(colors[0]); <span class="code-comment">// red</span>',
+        breakdown: [
+          { part: "Array / list", meaning: "A group of related values stored together." },
+          { part: "[ ]", meaning: "Holds the items in the list." },
+          { part: "colors[0]", meaning: "Get the first item; counting starts at zero in this example." }
+        ],
+        question: "What does `colors[0]` show in the example?",
+        answers: ["red", "blue", "both colors"],
+        correct: 0,
+        explain: "Correct! Position 0 is the first item, which is red.",
+        practice: {
+          kind: "array", prompt: "If colors is [red, blue], what is the item at position 1?",
+          placeholder: "Type a color", hint: "Position 0 is red, so position 1 is the next color.",
+          success: "Right! The item at position 1 is blue.",
+          hinglish: {
+            prompt: "Agar colors list [red, blue] hai, position 1 par kaunsa color hai?",
+            placeholder: "Color likho", hint: "Position 0 par red hai, agla color position 1 par hoga.",
+            success: "Sahi! Position 1 par blue hai."
+          }
+        },
+        hinglish: {
+          label: "Programming", title: "Cheezon ko list mein rakhna",
+          intro: "Array (ya list) kai milti-julti cheezon ko ek naam ke neeche rakhta hai. Jaise game ke scores, naam ya colors.",
+          ideaTitle: "List numbered boxes jaisi hai",
+          idea: "Kai languages mein pehli cheez position 0 par hoti hai. Isliye `colors[0]` ka matlab list ka pehla color hai.",
+          code: '<span class="code-comment">Ek list mein do colors rakho:</span>\nlet colors = ["red", "blue"];\nshow(colors[0]); <span class="code-comment">// red</span>',
+          breakdown: [
+            { part: "Array / list", meaning: "Related values ka group jo ek saath rakha jaata hai." },
+            { part: "[ ]", meaning: "List ki cheezein in brackets ke andar hoti hain." },
+            { part: "colors[0]", meaning: "Pehli cheez lo; yahan ginti zero se shuru hoti hai." }
+          ],
+          question: "Example mein `colors[0]` kya dikhata hai?",
+          answers: ["red", "blue", "dono colors"],
+          explain: "Bilkul! Position 0 pehli cheez hai, jo red hai."
+        }
+      },
+      {
+        id: "web-project", level: "intermediate", path: "web", icon: "🛠️", label: "Web coding", title: "Plan a tiny web project",
+        intro: "Real projects combine small ideas. HTML puts things on the page, CSS styles them, and JavaScript adds actions.",
+        ideaTitle: "Build one small thing at a time",
+        idea: "For a click-to-count game, first show a button, then style it, then make JavaScript add one point when clicked.",
+        code: '<span class="code-comment">A simple project plan:</span>\n1. HTML: add a score and button\n2. CSS: make them easy to see\n3. JavaScript: add a point on click',
+        breakdown: [
+          { part: "HTML", meaning: "Adds the page content, like a score and button." },
+          { part: "CSS", meaning: "Styles the content so it is clear and easy to use." },
+          { part: "JavaScript", meaning: "Makes the button do something when clicked." }
+        ],
+        question: "Which language would make a button add a point when clicked?",
+        answers: ["HTML", "CSS", "JavaScript"],
+        correct: 2,
+        explain: "Yes! JavaScript adds the click action; HTML and CSS provide the button and its style.",
+        practice: {
+          kind: "steps", prompt: "Write two steps for your own tiny project, one step on each line.",
+          placeholder: "1. Show a question\n2. Check my answer", hint: "Plan two small steps. You can use words, not code.",
+          success: "Good plan! Big projects are built from small steps.",
+          hinglish: {
+            prompt: "Apne chhote project ke do steps likho, har step alag line par.",
+            placeholder: "1. Sawaal dikhana\n2. Mera jawaab check karna", hint: "Do chhote steps socho. Code likhna zaroori nahi.",
+            success: "Badhiya plan! Bade projects chhote steps se bante hain."
+          }
+        },
+        hinglish: {
+          label: "Web coding", title: "Chhota web project plan karo",
+          intro: "Asli projects mein chhote ideas milkar kaam karte hain. HTML page banata hai, CSS style deta hai aur JavaScript actions jodta hai.",
+          ideaTitle: "Ek baar mein ek chhoti cheez banao",
+          idea: "Click karke score badhane wale game mein pehle button dikhao, phir uska style banao, phir click par JavaScript se ek point jodo.",
+          code: '<span class="code-comment">Simple project plan:</span>\n1. HTML: score aur button jodo\n2. CSS: dono ko saaf dikhne layak banao\n3. JavaScript: click par ek point jodo',
+          breakdown: [
+            { part: "HTML", meaning: "Page par content jodta hai, jaise score aur button." },
+            { part: "CSS", meaning: "Content ko saaf aur aasaan dikhne layak banata hai." },
+            { part: "JavaScript", meaning: "Click hone par button se kaam karwata hai." }
+          ],
+          question: "Click par button se ek point kaun jodega?",
+          answers: ["HTML", "CSS", "JavaScript"],
+          explain: "Sahi! JavaScript click ka action jodta hai; HTML button banata hai aur CSS style deta hai."
+        }
+      },
+      {
+        id: "apis", level: "intermediate", path: "web", icon: "📨", label: "Web coding", title: "How apps share information",
+        intro: "An API is a set of rules that lets two programs ask each other for information. For example, a weather app asks a weather service for today’s forecast.",
+        ideaTitle: "Like ordering at a café",
+        idea: "Your app sends a request. The service sends back a response. You do not need to know how the other program is built.",
+        code: '<span class="code-comment">The simple pattern:</span>\nApp: “What is today’s weather?”\nService: “It is sunny.”',
+        breakdown: [
+          { part: "API", meaning: "Rules that let programs share information." },
+          { part: "Request", meaning: "A question or piece of information one program asks for." },
+          { part: "Response", meaning: "The answer sent back by the other program." }
+        ],
+        question: "What usually comes back after an app sends a request?",
+        answers: ["A response", "A keyboard", "A new computer"],
+        correct: 0,
+        explain: "Exactly! A service sends a response back to answer the request.",
+        practice: {
+          kind: "request-response", prompt: "Write the two steps in order: request, then response.",
+          placeholder: "request → response", hint: "First the app asks, then the service answers.",
+          success: "Right! Request first, response second.",
+          hinglish: {
+            prompt: "Do steps sahi order mein likho: request, phir response.",
+            placeholder: "request → response", hint: "Pehle app sawaal poochta hai, phir service jawaab deti hai.",
+            success: "Sahi! Pehle request, phir response."
+          }
+        },
+        hinglish: {
+          label: "Web coding", title: "Apps jaankari kaise baantte hain",
+          intro: "API rules ka ek set hota hai jisse do programs ek-doosre se information maang sakte hain. Jaise weather app aaj ka forecast poochti hai.",
+          ideaTitle: "Cafe mein order dene jaisa",
+          idea: "App ek request bhejti hai aur service response mein jawaab bhejti hai. Tumhe yeh jaanna zaroori nahi ki doosra program kaise bana hai.",
+          code: '<span class="code-comment">Simple tareeka:</span>\nApp: “Aaj ka weather kaisa hai?”\nService: “Dhoop hai.”',
+          breakdown: [
+            { part: "API", meaning: "Rules jinse programs information share karte hain." },
+            { part: "Request", meaning: "Ek program ka sawaal ya maangi hui information." },
+            { part: "Response", meaning: "Doosre program ka bheja hua jawaab." }
+          ],
+          question: "App request bhejti hai toh aam taur par kya wapas aata hai?",
+          answers: ["Response", "Keyboard", "Naya computer"],
+          explain: "Bilkul! Service request ka jawaab response mein bhejti hai."
+        }
+      },
+      {
+        id: "git", level: "intermediate", path: "web", icon: "🗂️", label: "Programming", title: "Save code changes with Git",
+        intro: "Git keeps a history of changes to a project. It helps you save useful checkpoints and see what changed over time.",
+        ideaTitle: "Like save points in a game",
+        idea: "A commit is a saved checkpoint with a short note about the change. If a new change causes trouble, the history helps you understand what happened.",
+        code: '<span class="code-comment">A project’s history might say:</span>\n1. First version: show a button\n2. Next version: add a score\n3. Next version: fix a color',
+        breakdown: [
+          { part: "Git", meaning: "A tool that tracks changes to project files." },
+          { part: "Version", meaning: "A saved state of your project at a point in time." },
+          { part: "Commit", meaning: "A checkpoint that saves selected changes with a note." },
+          { part: "History", meaning: "The list of saved checkpoints and what changed." }
+        ],
+        question: "What is a Git commit most like?",
+        answers: ["A saved checkpoint of project changes", "A computer password", "A website picture"],
+        correct: 0,
+        explain: "Right! A commit is a saved checkpoint that helps you track project changes.",
+        practice: {
+          kind: "git-commit", prompt: "What is the Git word for a saved checkpoint? Type the word.",
+          placeholder: "commit", hint: "It starts with c and saves a set of project changes.",
+          success: "Correct! A commit saves a checkpoint in the project history.",
+          hinglish: {
+            prompt: "Git mein saved checkpoint ko kya kehte hain? Word likho.",
+            placeholder: "commit", hint: "Yeh c se shuru hota hai aur project ke changes save karta hai.",
+            success: "Sahi! Commit project history mein checkpoint save karta hai."
+          }
+        },
+        hinglish: {
+          label: "Programming", title: "Git se code changes save karna",
+          intro: "Git project ke changes ki history rakhta hai. Isse tum useful checkpoints save kar sakte ho aur dekh sakte ho ki time ke saath kya badla.",
+          ideaTitle: "Game ke save point jaisa",
+          idea: "Commit ek saved checkpoint hota hai, saath mein chhota note hota hai ki kya badla. Naya change problem kare toh history se samajh sakte ho.",
+          code: '<span class="code-comment">Project ki history kuch aisi ho sakti hai:</span>\n1. Pehla version: button dikhao\n2. Agla version: score jodo\n3. Agla version: color theek karo',
+          breakdown: [
+            { part: "Git", meaning: "Tool jo project files ke changes ka hisaab rakhta hai." },
+            { part: "Version", meaning: "Kisi waqt par project ki saved state." },
+            { part: "Commit", meaning: "Chune hue changes ka checkpoint aur unka chhota note." },
+            { part: "History", meaning: "Saved checkpoints aur changes ki list." }
+          ],
+          question: "Git commit kis cheez jaisa hai?",
+          answers: ["Project changes ka saved checkpoint", "Computer password", "Website ki picture"],
+          explain: "Bilkul! Commit saved checkpoint hai jo project ke changes ka hisaab rakhta hai."
+        }
+      },
+      {
+        id: "databases", level: "intermediate", path: "web", icon: "🗃️", label: "Programming", title: "Store information in a database",
+        intro: "A database stores information in an organized way so a program can find it later. A simple table is a bit like a spreadsheet.",
+        ideaTitle: "Rows are records, columns are details",
+        idea: "This example asks a pretend class list for student names. It only teaches the idea of asking for data; it does not connect to a real database.",
+        code: '<span class="code-comment">A simple question to a pretend table:</span>\nSELECT name FROM students;',
+        breakdown: [
+          { part: "Database", meaning: "An organized place where a program stores information." },
+          { part: "Table", meaning: "A group of related information, like a spreadsheet sheet." },
+          { part: "Row", meaning: "One record, such as one student." },
+          { part: "SELECT name", meaning: "Ask to see the name detail." },
+          { part: "FROM students", meaning: "Get that detail from the students table." }
+        ],
+        question: "In a table, what does one row usually represent?",
+        answers: ["One record, such as one student", "The whole computer", "A website color"],
+        correct: 0,
+        explain: "Exactly! One row is one record, with its details in columns.",
+        practice: {
+          kind: "database", prompt: "In `SELECT name FROM students;`, what is the table called?",
+          placeholder: "Type the table name", hint: "Look at the word after FROM.",
+          success: "Right! The data is being requested from the students table.",
+          hinglish: {
+            prompt: "`SELECT name FROM students;` mein table ka naam kya hai?",
+            placeholder: "Table ka naam likho", hint: "FROM ke baad wala word dekho.",
+            success: "Sahi! Jaankari students table se maangi ja rahi hai."
+          }
+        },
+        hinglish: {
+          label: "Programming", title: "Database mein jaankari rakhna",
+          intro: "Database jaankari ko sahi tarah rakhta hai, taaki program baad mein use dhoondh sake. Simple table spreadsheet jaisi hoti hai.",
+          ideaTitle: "Rows records hote hain, columns unki details",
+          idea: "Yeh example pretend class list se students ke naam poochta hai. Yeh sirf idea samjhata hai; kisi asli database se connect nahi karta.",
+          code: '<span class="code-comment">Pretend table se ek simple sawaal:</span>\nSELECT name FROM students;',
+          breakdown: [
+            { part: "Database", meaning: "Program ki information rakhne ki organized jagah." },
+            { part: "Table", meaning: "Related jaankari ka group, spreadsheet jaisa." },
+            { part: "Row", meaning: "Ek record, jaise ek student ki jaankari." },
+            { part: "SELECT name", meaning: "Naam wali detail dekhne ko kaho." },
+            { part: "FROM students", meaning: "Woh detail students table se lo." }
+          ],
+          question: "Table mein ek row aam taur par kya hoti hai?",
+          answers: ["Ek record, jaise ek student", "Poora computer", "Website ka color"],
+          explain: "Bilkul! Ek row ek record hoti hai aur columns mein uski details hoti hain."
+        }
+      },
+      {
+        id: "network-basics", level: "expert", path: "security", icon: "🌐", label: "Network safety", title: "Network basics, safely",
+        intro: "A network is a group of devices that share information. Your home Wi-Fi connects your devices to your home network. Learning its parts helps you understand how information travels.",
+        ideaTitle: "Data needs a safe route",
+        idea: "A router connects devices and forwards data. An IP address helps data reach a device. DNS looks up the IP address for a website name. A port number helps the device deliver data to the right app or service.",
+        code: '<span class="code-comment">A safe, high-level example:</span>\nYou enter a website name\n→ DNS looks up its IP address\n→ your router forwards the data\n→ the right app receives it\n\n<span class="code-comment">Learn the parts; only test networks with permission.</span>',
+        breakdown: [
+          { part: "Network", meaning: "Devices connected so they can share information." },
+          { part: "Router", meaning: "A device that connects networks and forwards information between them." },
+          { part: "IP address", meaning: "An address that helps identify where data should be delivered on a network." },
+          { part: "DNS", meaning: "A service that looks up the IP address linked to a website name." },
+          { part: "Port", meaning: "A number that helps a device deliver network data to the right app or service." }
+        ],
+        question: "What is a router’s everyday job at home?",
+        answers: ["Connect devices and direct their internet data", "Write your code", "Charge your phone"],
+        correct: 0,
+        explain: "Right! A router connects your devices and directs their network traffic.",
+        practice: {
+          kind: "router", prompt: "Which home device connects your Wi-Fi devices to the internet? Type its name.",
+          placeholder: "Type the device name", hint: "It is the box that shares Wi-Fi around your home.",
+          success: "Correct! The router connects devices and directs data.",
+          hinglish: {
+            prompt: "Ghar mein kaunsa device Wi-Fi devices ko internet se jodta hai? Naam likho.",
+            placeholder: "Device ka naam likho", hint: "Wahi box jo ghar mein Wi-Fi baantta hai.",
+            success: "Sahi! Router devices ko jodta aur data bhejta hai."
+          }
+        },
+        hinglish: {
+          label: "Network safety", title: "Network ki basic jaankari, safe tareeke se",
+          intro: "Network connected devices ka group hota hai jo information share karte hain. Ghar ka Wi-Fi tumhare devices ko home network se jodta hai. Iske parts samajhkar tum jaan sakte ho ki information kaise travel karti hai.",
+          ideaTitle: "Data ko sahi raasta chahiye",
+          idea: "Router devices ko jodkar data aage bhejta hai. IP address data ko device tak pahunchane mein madad karta hai. DNS website ke naam se uska IP address dhoondhta hai. Port number device ko data sahi app ya service tak pahunchane mein madad karta hai.",
+          code: '<span class="code-comment">Ek safe, simple example:</span>\nTum website ka naam likhte ho\n→ DNS uska IP address dhoondhta hai\n→ router data aage bhejta hai\n→ sahi app ko data milta hai\n\n<span class="code-comment">Network ko sirf permission ke saath test karo.</span>',
+          breakdown: [
+            { part: "Network", meaning: "Connected devices ka group jo information share karta hai." },
+            { part: "Router", meaning: "Device jo networks ko jodkar unke beech data bhejta hai." },
+            { part: "IP address", meaning: "Address jo data ko network par sahi jagah pahunchane mein madad karta hai." },
+            { part: "DNS", meaning: "Service jo website ke naam se uska IP address dhoondhti hai." },
+            { part: "Port", meaning: "Number jo device ko data sahi app ya service tak pahunchane mein madad karta hai." }
+          ],
+          question: "Ghar mein router ka aam kaam kya hai?",
+          answers: ["Devices ko jodna aur internet data bhejna", "Code likhna", "Phone charge karna"],
+          explain: "Bilkul! Router devices ko jodta aur unka network data sahi jagah bhejta hai."
+        }
+      },
+      {
+        id: "ethical-security", level: "expert", path: "security", icon: "✅", label: "Ethical security", title: "Ethical hacking starts with permission",
+        intro: "Ethical hacking means checking security with clear permission so problems can be fixed. This app teaches safety and defense—not breaking into real systems.",
+        ideaTitle: "Permission, scope, and respect",
+        idea: "Only test a system you own or have written permission to assess. Agree on exactly which system and actions are allowed. Never test a stranger’s Wi-Fi, device, or website.",
+        code: '<span class="code-comment">Safe practice rules:</span>\n1. Use a made-for-practice lab or your own device\n2. Get clear permission first\n3. Stay within the agreed limits\n4. Report problems so they can be fixed',
+        breakdown: [
+          { part: "Ethical hacking", meaning: "Authorized security checking done to help improve protection." },
+          { part: "Permission", meaning: "Clear approval from the owner before any security test." },
+          { part: "Scope", meaning: "The exact devices and actions the owner allowed." },
+          { part: "Practice lab", meaning: "A purposely safe training environment, separate from real targets." }
+        ],
+        question: "Which is an ethical place to practice security?",
+        answers: ["A training lab made for practice, with permission", "A neighbor’s Wi-Fi", "Any website you find"],
+        correct: 0,
+        explain: "Correct! Use a purpose-built lab or a system you own, and stay within permission.",
+        practice: {
+          kind: "authorization", prompt: "Type one safe place to practice: your own lab, or a training lab with permission.",
+          placeholder: "A training lab with permission", hint: "Your answer should include a lab or your own system, and permission.",
+          success: "Good choice! Practice only where you have clear permission.",
+          hinglish: {
+            prompt: "Practice ki ek safe jagah likho: apna lab ya permission wala training lab.",
+            placeholder: "Permission wala training lab", hint: "Jawaab mein lab ya apna system, aur permission ka zikr karo.",
+            success: "Sahi jagah! Practice sirf wahi karo jahan clear permission ho."
+          }
+        },
+        hinglish: {
+          label: "Ethical security", title: "Ethical hacking ki shuruaat permission se",
+          intro: "Ethical hacking ka matlab hai clear permission lekar security check karna, taaki problems theek ho saken. Yeh app safety aur defense sikhata hai—real systems mein ghusna nahi.",
+          ideaTitle: "Permission, limits aur respect zaroori hain",
+          idea: "Sirf apne system ya written permission wale system ko test karo. Pehle tay karo kaunsa system aur kaunse actions allowed hain. Kisi aur ka Wi-Fi, device ya website test mat karo.",
+          code: '<span class="code-comment">Safe practice ke rules:</span>\n1. Practice lab ya apna device use karo\n2. Pehle clear permission lo\n3. Tay limits ke andar raho\n4. Problem mile toh owner ko batao',
+          breakdown: [
+            { part: "Ethical hacking", meaning: "Permission lekar security check karna, taaki protection behtar ho." },
+            { part: "Permission", meaning: "Security test se pehle owner ki saaf manzoori." },
+            { part: "Scope", meaning: "Kaunse devices aur kaunse actions allowed hain." },
+            { part: "Practice lab", meaning: "Seekhne ke liye bana safe environment, real systems se alag." }
+          ],
+          question: "Security practice karne ki sahi jagah kaunsi hai?",
+          answers: ["Practice ke liye bana lab, clear permission ke saath", "Padosi ka Wi-Fi", "Koi bhi website"],
+          explain: "Sahi! Sirf practice lab ya apna system use karo, aur permission ki limits mein raho."
+        }
+      },
+      {
+        id: "network-defense", level: "expert", path: "security", icon: "🔒", label: "Network safety", title: "Protect a home network",
+        intro: "Good security is mostly careful setup and regular maintenance. A few simple habits make your home Wi-Fi harder for strangers to misuse.",
+        ideaTitle: "Lock the doors and keep the lock updated",
+        idea: "Use a long, unique Wi-Fi password, turn on modern WPA2/WPA3 security, install router updates, and use guest Wi-Fi for visitors.",
+        code: '<span class="code-comment">A safe home-network checklist:</span>\n✓ Change the router’s default admin password\n✓ Use WPA2 or WPA3 Wi-Fi security\n✓ Install updates from the router maker\n✓ Make a separate guest network',
+        breakdown: [
+          { part: "Unique password", meaning: "A long password not reused on another account." },
+          { part: "WPA2 / WPA3", meaning: "Modern security settings that protect Wi-Fi connections." },
+          { part: "Updates", meaning: "Fixes from the device maker that can close known security gaps." },
+          { part: "Guest network", meaning: "A separate Wi-Fi connection for visitors’ devices." }
+        ],
+        question: "Which is a good way to protect your home Wi-Fi?",
+        answers: ["Keep the router’s default password", "Use a unique password and install updates", "Share the password publicly"],
+        correct: 1,
+        explain: "Exactly! A unique password and updates help keep your home network safer.",
+        practice: {
+          kind: "defense", prompt: "Write two safe steps for protecting home Wi-Fi, such as updates, a strong password, or guest Wi-Fi.",
+          placeholder: "Use a strong password and install updates",
+          hint: "Name at least two: strong password, updates, WPA2/WPA3, or guest Wi-Fi.",
+          success: "Great! Those are practical defensive steps for your own network.",
+          hinglish: {
+            prompt: "Ghar ke Wi-Fi ko safe rakhne ke do tareeke likho, jaise updates, strong password, ya guest Wi-Fi.",
+            placeholder: "Strong password rakho aur updates lagao",
+            hint: "Do cheezein likho: strong password, updates, WPA2/WPA3, ya guest Wi-Fi.",
+            success: "Badhiya! Yeh apne network ko safe rakhne ke kaam ke tareeke hain."
+          }
+        },
+        hinglish: {
+          label: "Network safety", title: "Ghar ka network safe rakho",
+          intro: "Achhi security kaafi had tak sahi setup aur regular updates se aati hai. Kuch simple habits se ghar ka Wi-Fi zyada safe rehta hai.",
+          ideaTitle: "Darwaaza lock karo aur lock update rakho",
+          idea: "Lamba, alag Wi-Fi password rakho, WPA2/WPA3 security chalao, router ke updates lagao aur mehmaanon ke liye guest Wi-Fi banao.",
+          code: '<span class="code-comment">Safe home-network checklist:</span>\n✓ Router ka default admin password badlo\n✓ WPA2 ya WPA3 Wi-Fi security use karo\n✓ Router maker ke updates lagao\n✓ Alag guest network banao',
+          breakdown: [
+            { part: "Alag password", meaning: "Lamba password jo kisi aur account par use na ho." },
+            { part: "WPA2 / WPA3", meaning: "Wi-Fi connection ko protect karne wali modern security settings." },
+            { part: "Updates", meaning: "Maker ke fixes jo jaane-pehchaane security gaps band karte hain." },
+            { part: "Guest network", meaning: "Mehmaanon ke devices ke liye alag Wi-Fi connection." }
+          ],
+          question: "Ghar ke Wi-Fi ko safe rakhne ka achha tareeka kaunsa hai?",
+          answers: ["Router ka default password rakho", "Alag password aur updates use karo", "Password sabko bata do"],
+          explain: "Bilkul! Alag password aur updates ghar ke network ko safe rakhte hain."
+        }
+      }
+    ];
+
+    const uiText = {
+      en: {
+        switchLanguage: "Hinglish", languageLabel: "Switch to Hinglish",
+        paths: "Choose your level", allLevels: "All levels", zeroLevel: "Level 0 · Zero", beginnerLevel: "Level 1 · Beginner", intermediateLevel: "Level 2 · Intermediate", expertLevel: "Level 3 · Expert path", lockedLevelHint: "Complete the previous level to unlock this one.", unlockNote: "Complete every challenge in a level to unlock the next one.",
+        progress: "Your progress", courseProgress: "Course progress", welcomeEyebrow: "Start from the very beginning",
+        welcomeTitle: "Hey Himesh, let’s learn the basics!", welcomeDescription: "Never coded before? Perfect. Start with what code means, then learn one new idea at a time. No need to memorize anything.",
+        xpEarned: "XP earned", lessonsDone: "Lessons done", yourLevel: "Your level", rookie: "Rookie", curiousCoder: "Curious Coder", codeExplorer: "Code Explorer",
+        sectionDescription: "Small steps, plain words, no experience needed.", resetProgress: "Reset progress", nextSteps: "Lessons in this level", lessonCountOne: "lesson", lessonCountMany: "lessons",
+        tipTitle: "Quest tip", tipDescription: "Making mistakes is part of coding! Developers try, learn what happened, and try again. That’s how you level up.",
+        bottomNote: "Your progress and notes save on this device. Click Full screen above or press F11 to fill your screen.",
+        lessonComplete: "Lesson complete", lessonTime: "About 2 minutes", example: "A tiny example", breakdownTitle: "What each part means",
+        walkthroughTitle: "▶️ Run the code one line at a time", runLineOne: "Run line 1", runLineTwo: "Run line 2", scoreLabel: "Current score", lineOneExplain: "Make a named box called score and put 1 in it.", lineTwoExplain: "Take the old score (1), add 1, and save the new value.", startWalkthrough: "Start with line 1. The score will be 1.", lineOneDone: "Line 1 ran: score now holds 1. Now run line 2.", lineTwoDone: "Line 2 used the old 1, added 1, and saved 2.",
+        scriptWalkthroughTitle: "▶️ Make and run your first script", scriptFileExplain: "A script is code saved in a file. The `.py` ending means it is a Python file.", scriptLineOneExplain: "Tell Python to show Hello, Himesh! on the screen.", scriptLineTwoExplain: "Tell Python to show another message on the next line.", scriptOutputTitle: "What the script shows", scriptOutputStart: "Run line 1 to see what the script displays.", scriptLineOneDone: "Line 1 ran. Now run line 2.", scriptLineTwoDone: "Great! Your two-line script ran in order.",
+        practiceTitle: "✏️ Try it yourself", practiceXp: "+5 XP", practiceCheck: "Check my answer", practiceEarned: " +5 XP earned!", practiceAlreadyEarned: " You already earned practice XP.",
+        notesTitle: "📝 My notes", notesPlaceholder: "Write a note or question for yourself…", notesSaved: "Saved on this device",
+        challengeTitle: "⚡ Quick challenge · +20 XP", challengeDone: "You’ve already earned XP for this lesson. Great work!",
+        smallHint: "Not sure? Take another look at the example above.<br>You can try again if you miss it.",
+        nextLesson: "Next lesson →", finishChallenge: "Finish challenge first", tryAgain: "Not quite—give it another try. You can do it!",
+        practiceHint: "Try again—check the lesson above for a hint.", hintPrefix: "Hint: ",
+        typingTitle: "⌨️ Letter-by-letter practice", typingDescription: "Type the word hello. Each correct letter disappears from the faded guide.", typingWordLabel: "Word:", typingRemainingLabel: "Still to type:", typingPlaceholder: "Type hello here", typingReady: "Start with the faded letters.", typingNext: "Next letter: ", typingCorrect: "That letter is right. Next: ", typingDone: "You typed hello! Great work.",
+        practiceStorageError: "Your notes could not be saved in this browser.",
+        storageError: "This browser could not save your progress. It will stay while this page is open.",
+        sectionStart: "Start here: the very first step", sectionContinue: "Pick up where you left off", sectionDone: "You finished your first quest!",
+        oneStep: "little step to complete your adventure.", manySteps: "little steps to complete your adventure.",
+        allDone: "You finished every lesson. Amazing work!", completed: "Completed", lessonShort: "2 min lesson",
+        levelNameZero: "Level 0 · Zero", levelNameBeginner: "Level 1 · Beginner", levelNameIntermediate: "Level 2 · Intermediate", levelNameExpert: "Level 3 · Advanced",
+        allTitle: "Your path from zero to expert", allDescription: "Start with the basics, then move up one level at a time.",
+        zeroTitle: "Level 0 · Start from zero", zeroDescription: "Learn the first ideas: what code is, web pages, styling, and simple actions.",
+        beginnerTitle: "Level 1 · Beginner", beginnerDescription: "Learn programming building blocks: choices, repeats, functions, and Python.",
+        intermediateTitle: "Level 2 · Intermediate", intermediateDescription: "Bring ideas together with projects, lists, APIs, Git, and databases.",
+        expertTitle: "Level 3 · Advanced: safe and ethical security", expertDescription: "Learn networks, permission, and defensive security. These are foundations; expertise takes time and practice. Practice only in a lab or on systems you own or have permission to test.",
+        resetConfirm: "Start your learning adventure over? This clears saved XP and completed lessons, but keeps your notes.",
+        fullScreen: "Full screen", exitFullScreen: "Exit full screen", fullScreenHelp: "View full screen (or press F11)", exitFullScreenHelp: "Exit full screen (or press Esc)",
+        fullScreenBlocked: "Full screen wasn’t available here. Press F11 to make your browser full screen."
+      },
+      hinglish: {
+        switchLanguage: "English", languageLabel: "English mein badlo",
+        paths: "Apna level chuno", allLevels: "Saare levels", zeroLevel: "Level 0 · Bilkul shuru", beginnerLevel: "Level 1 · Beginner", intermediateLevel: "Level 2 · Beech ka level", expertLevel: "Level 3 · Expert path", lockedLevelHint: "Is level ko kholne ke liye pichhla level complete karo.", unlockNote: "Agla level kholne ke liye is level ke saare challenges complete karo.",
+        progress: "Tumhari progress", courseProgress: "Course progress", welcomeEyebrow: "Bilkul shuru se seekho",
+        welcomeTitle: "Hey Himesh, coding basics seekhein?", welcomeDescription: "Pehle kabhi coding nahi ki? Koi baat nahi! Pehle jaanenge code kya hota hai, phir ek-ek nayi cheez seekhenge. Yaad karne ki zaroorat nahi.",
+        xpEarned: "XP points", lessonsDone: "Lessons complete", yourLevel: "Tumhara level", rookie: "Naya learner", curiousCoder: "Curious coder", codeExplorer: "Code explorer",
+        sectionDescription: "Chhote steps, aasaan words—pehle se kuch aana zaroori nahi.", resetProgress: "Progress reset karo", nextSteps: "Is level ke lessons", lessonCountOne: "lesson", lessonCountMany: "lessons",
+        tipTitle: "Quest tip", tipDescription: "Coding mein galtiyan hona normal hai! Try karo, samjho kya hua, phir dobara try karo. Isi tarah level up hote ho.",
+        bottomNote: "Tumhari progress aur notes isi device par save hote hain. Upar Full screen dabao ya F11 press karke poori screen use karo.",
+        lessonComplete: "Lesson complete", lessonTime: "Lagbhag 2 minute", example: "Chhota sa example", breakdownTitle: "Har part ka kya matlab hai",
+        walkthroughTitle: "▶️ Code ko ek-ek line chalao", runLineOne: "Line 1 chalao", runLineTwo: "Line 2 chalao", scoreLabel: "Abhi score", lineOneExplain: "`score` naam ka box banao aur usmein 1 rakho.", lineTwoExplain: "Purana score (1) lo, usmein 1 jodo, aur naya number save karo.", startWalkthrough: "Pehle line 1 chalao. Score 1 ho jaayega.", lineOneDone: "Line 1 chali: score ab 1 hai. Ab line 2 chalao.", lineTwoDone: "Line 2 ne purana 1 liya, usmein 1 joda aur 2 save kiya.",
+        scriptWalkthroughTitle: "▶️ Apni pehli script banao aur chalao", scriptFileExplain: "Script code ki saved file hoti hai. `.py` se pata chalta hai ki yeh Python file hai.", scriptLineOneExplain: "Python ko screen par Hello, Himesh! dikhane ko kaho.", scriptLineTwoExplain: "Python ko agli line par ek aur message dikhane ko kaho.", scriptOutputTitle: "Script screen par kya dikhati hai", scriptOutputStart: "Script kya dikhati hai dekhne ke liye line 1 chalao.", scriptLineOneDone: "Line 1 chal gayi. Ab line 2 chalao.", scriptLineTwoDone: "Bahut badhiya! Tumhari do-line script sahi order mein chali.",
+        practiceTitle: "✏️ Ab tum karke dekho", practiceXp: "+5 XP", practiceCheck: "Mera jawaab check karo", practiceEarned: " +5 XP mil gaye!", practiceAlreadyEarned: " Practice XP tum pehle hi kama chuke ho.",
+        notesTitle: "📝 Mere notes", notesPlaceholder: "Apne liye koi note ya sawaal likho…", notesSaved: "Isi device par save ho gaya",
+        challengeTitle: "⚡ Quick challenge · +20 XP", challengeDone: "Is lesson ke XP tum kama chuke ho. Bahut badhiya!",
+        smallHint: "Samajh nahi aaya? Upar example phir se dekho.<br>Galat jawaab ho toh dobara try kar sakte ho.",
+        nextLesson: "Agla lesson →", finishChallenge: "Pehle challenge poora karo", tryAgain: "Abhi sahi nahi—ek baar aur try karo. Tum kar sakte ho!",
+        practiceHint: "Ek baar aur try karo—lesson ka example madad karega.", hintPrefix: "Hint: ",
+        typingTitle: "⌨️ Ek-ek letter type karke dekho", typingDescription: "hello word type karo. Har sahi letter likhne par woh feeke guide se hat jaayega.", typingWordLabel: "Word:", typingRemainingLabel: "Abhi likhna baaki:", typingPlaceholder: "Yahan hello type karo", typingReady: "Feeke letters dekhkar shuru karo.", typingNext: "Agla letter: ", typingCorrect: "Yeh letter sahi hai. Agla: ", typingDone: "Tumne hello likh diya! Bahut badhiya.",
+        practiceStorageError: "Is browser mein notes save nahi ho paaye.",
+        storageError: "Is browser mein progress save nahi ho paayi. Page khula rahe tab tak rahegi.",
+        sectionStart: "Yahan se shuru karo", sectionContinue: "Jahan chhoda tha, wahan se jaari rakho", sectionDone: "Tumne apni pehli quest poori kar li!",
+        oneStep: "chhota step aur baaki hai.", manySteps: "chhote steps aur baaki hain.",
+        allDone: "Saare lessons complete! Bahut badhiya!", completed: "Complete", lessonShort: "2 minute ka lesson",
+        levelNameZero: "Level 0 · Zero se", levelNameBeginner: "Level 1 · Beginner", levelNameIntermediate: "Level 2 · Intermediate", levelNameExpert: "Level 3 · Advanced",
+        allTitle: "Zero se expert tak ka safar", allDescription: "Basics se shuru karo aur ek-ek level aage badho.",
+        zeroTitle: "Level 0 · Bilkul shuru se", zeroDescription: "Pehle ideas seekho: code kya hai, web page, style aur simple actions.",
+        beginnerTitle: "Level 1 · Beginner", beginnerDescription: "Programming ke basics: faisle, repeats, functions aur Python.",
+        intermediateTitle: "Level 2 · Beech ka level", intermediateDescription: "Projects, lists, APIs, Git aur databases seekho.",
+        expertTitle: "Level 3 · Advanced: safe aur ethical security", expertDescription: "Network, permission aur protection seekho. Yeh shuruaat hai—expert banne ke liye kaafi practice chahiye. Practice sirf lab ya apne/permission wale system par karo.",
+        resetConfirm: "Kya tum learning phir se shuru karna chahte ho? Saved XP aur completed lessons clear honge, notes nahi mitenge.",
+        fullScreen: "Full screen", exitFullScreen: "Full screen band karo", fullScreenHelp: "Full screen dekho (ya F11 dabao)", exitFullScreenHelp: "Full screen se niklo (ya Esc dabao)",
+        fullScreenBlocked: "Yahan full screen nahi khul paayi. Browser ko full screen karne ke liye F11 dabao."
+      }
+    };
+
+    const quizHints = {
+      basics: { en: "Think of a recipe: what do its steps tell someone to do?", hinglish: "Recipe ke steps socho: woh kisi ko kya karne ko batate hain?" },
+      html: { en: "HTML labels what each part of a web page is.", hinglish: "HTML web page ke har part ko label karta hai." },
+      css: { en: "Look at the value written after `color:`.", hinglish: "`color:` ke baad likhi value dekho." },
+      javascript: { en: "Start at 1 and count one step forward.", hinglish: "1 se shuru karo aur ek step aage gino." },
+      debug: { en: "Text needs one quote at the start and another at the end.", hinglish: "Text ke shuru aur aakhir mein ek-ek quote hona chahiye." },
+      prompts: { en: "Look for a prompt that says the topic and gives useful details.", hinglish: "Aisa prompt dekho jo topic aur kaam ki details batata ho." },
+      "prompt-builder": { en: "Knowing your ingredients helps AI suggest a meal you can make.", hinglish: "Tumhare ingredients jaankar AI aisa khana suggest kar sakta hai jo tum bana sako." },
+      conditions: { en: "12 is bigger than 10, so follow the instructions for a true condition.", hinglish: "12, 10 se bada hai; isliye sahi condition wale instructions follow karo." },
+      loops: { en: "Count how many times the loop is told to repeat.", hinglish: "Gino loop ko kitni baar repeat karne ko kaha gaya hai." },
+      functions: { en: "The function is named `greet`. What happens when you run that name?", hinglish: "Function ka naam `greet` hai. Is naam ko chalaane par kya hoga?" },
+      python: { en: "A script follows its instructions one line at a time, from top to bottom.", hinglish: "Script instructions ko ek-ek line karke upar se neeche follow karti hai." },
+      arrays: { en: "Position 0 is the first item; position 1 is the next one.", hinglish: "Position 0 pehli cheez hai; position 1 uske baad wali." },
+      "web-project": { en: "HTML adds the button, CSS styles it, and JavaScript makes it react to a click.", hinglish: "HTML button jodta hai, CSS style deta hai, JavaScript click par action karwata hai." },
+      apis: { en: "One program asks a question; the other sends an answer back.", hinglish: "Ek program sawaal bhejta hai; doosra jawaab wapas bhejta hai." },
+      git: { en: "Think of a game save point that remembers your project at one moment.", hinglish: "Game ke save point jaisa socho jo project ki ek waqt wali state yaad rakhta hai." },
+      databases: { en: "A table row is one record, like one student with their details.", hinglish: "Table ki ek row ek record hoti hai, jaise ek student ki details." },
+      "network-basics": { en: "Think of the home device that shares Wi-Fi and connects your devices.", hinglish: "Ghar ke us device ke baare mein socho jo Wi-Fi baantkar devices ko jodta hai." },
+      "ethical-security": { en: "Choose a practice lab made for training, or a system you own and have permission to test.", hinglish: "Training ke liye bana lab chuno, ya apna system jise test karne ki permission ho." },
+      "network-defense": { en: "Use a unique password and keep the router’s software updated.", hinglish: "Alag password rakho aur router ka software updated rakho." }
+    };
+
+    const levelOrder = ["zero", "beginner", "intermediate", "expert"];
+    const saved = loadProgress();
+    let language = loadLanguage();
+    let currentId = lessons.find((lesson) => !saved.completed.includes(lesson.id))?.id || lessons[0].id;
+    let activeLevel = lessons.find((lesson) => !saved.completed.includes(lesson.id))?.level || "all";
+    let answeredCorrectly = saved.completed.includes(currentId);
+
+    function loadProgress() {
+      try {
+        const data = JSON.parse(localStorage.getItem("codeQuestProgress") || "{}");
+        const validLessonIds = lessons.map((lesson) => lesson.id);
+        const notes = data.notes && typeof data.notes === "object" && !Array.isArray(data.notes) ? data.notes : {};
+        const practiceDrafts = data.practiceDrafts && typeof data.practiceDrafts === "object" && !Array.isArray(data.practiceDrafts) ? data.practiceDrafts : {};
+        return {
+          completed: Array.isArray(data.completed) ? data.completed.filter((id) => validLessonIds.includes(id)) : [],
+          practiceCompleted: Array.isArray(data.practiceCompleted) ? data.practiceCompleted.filter((id) => validLessonIds.includes(id)) : [],
+          notes,
+          practiceDrafts,
+          xp: Number.isFinite(data.xp) && data.xp > 0 ? data.xp : 0
+        };
+      } catch {
+        return { completed: [], practiceCompleted: [], notes: {}, practiceDrafts: {}, xp: 0 };
+      }
+    }
+
+    function loadLanguage() {
+      try {
+        return localStorage.getItem("codeQuestLanguage") === "en" ? "en" : "hinglish";
+      } catch {
+        return "hinglish";
+      }
+    }
+
+    function saveProgress() {
+      try {
+        localStorage.setItem("codeQuestProgress", JSON.stringify({
+          completed: saved.completed,
+          practiceCompleted: saved.practiceCompleted,
+          notes: saved.notes,
+          practiceDrafts: saved.practiceDrafts,
+          xp: saved.xp
+        }));
+        return true;
+      } catch {
+        document.querySelector(".bottom-note").textContent = uiText[language].storageError;
+        return false;
+      }
+    }
+
+    function getLessonCopy(lesson) {
+      return language === "hinglish" ? lesson.hinglish : lesson;
+    }
+
+    function getPracticeCopy(lesson) {
+      return language === "hinglish" ? lesson.practice.hinglish : lesson.practice;
+    }
+
+    function escapeHtml(text) {
+      return text.replace(/[&<>"']/g, (character) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      })[character]);
+    }
+
+    function getVisibleLessons() {
+      return lessons.filter((lesson) => (activeLevel === "all" || lesson.level === activeLevel) && isLevelUnlocked(lesson.level));
+    }
+
+    function isLevelUnlocked(level) {
+      const index = levelOrder.indexOf(level);
+      if (index <= 0) return true;
+      const previousLessons = lessons.filter((lesson) => lesson.level === levelOrder[index - 1]);
+      return previousLessons.length > 0 && previousLessons.every((lesson) => saved.completed.includes(lesson.id));
+    }
+
+    function updateLevelButtons() {
+      const ui = uiText[language];
+      document.querySelectorAll(".path-button").forEach((button) => {
+        button.classList.toggle("active", button.dataset.level === activeLevel);
+        const locked = button.dataset.level !== "all" && !isLevelUnlocked(button.dataset.level);
+        button.disabled = locked;
+        const label = button.querySelector(".path-label").textContent;
+        button.querySelector(".path-lock").textContent = locked ? "🔒" : "";
+        button.title = locked ? ui.lockedLevelHint : label;
+        button.setAttribute("aria-label", locked ? `${label}. ${ui.lockedLevelHint}` : label);
+      });
+    }
+
+    function renderLesson() {
+      const lesson = lessons.find((item) => item.id === currentId);
+      const text = getLessonCopy(lesson);
+      const practiceText = getPracticeCopy(lesson);
+      const complete = saved.completed.includes(lesson.id);
+      const practiceComplete = saved.practiceCompleted.includes(lesson.id);
+      const ui = uiText[language];
+      document.getElementById("lesson-card").innerHTML = `
+        <div class="lesson-top">
+          <span class="lesson-label"><span aria-hidden="true">${lesson.icon}</span> ${text.label}</span>
+          <span class="lesson-time">${complete ? `✅ ${ui.lessonComplete}` : `⏱ ${ui.lessonTime}`}</span>
+        </div>
+        <h3>${text.title}</h3>
+        <p class="lesson-intro">${text.intro}</p>
+        <div class="idea-box"><span aria-hidden="true">🧠</span><div><strong>${text.ideaTitle}</strong><p>${text.idea}</p></div></div>
+        ${text.breakdown ? `<div class="breakdown-box"><h4>${ui.breakdownTitle}</h4><div class="breakdown-list">${text.breakdown.map((part) => `<div class="breakdown-row"><code>${part.part}</code><span>${part.meaning}</span></div>`).join("")}</div></div>` : ""}
+        ${lesson.id === "basics" ? `<section class="typing-box" aria-labelledby="typing-title">
+          <h4 id="typing-title">${ui.typingTitle}</h4>
+          <p>${ui.typingDescription}</p>
+          <div class="typing-guides"><span>${ui.typingWordLabel} <code>hello</code></span><span>${ui.typingRemainingLabel} <code class="typing-remaining" id="typing-remaining" aria-live="polite">hello</code></span></div>
+          <input id="typing-input" type="text" maxlength="5" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="${ui.typingPlaceholder}" placeholder="${ui.typingPlaceholder}">
+          <span class="typing-status" id="typing-status" role="status">${ui.typingReady}</span>
+        </section>` : ""}
+        <div class="code-box" aria-label="${ui.example}">
+          <div class="code-head"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span>${ui.example}</span><span></span></div>
+          <pre>${text.code}</pre>
+        </div>
+        ${lesson.id === "javascript" ? `<section class="walkthrough-box" aria-labelledby="walkthrough-title">
+          <h4 id="walkthrough-title">${ui.walkthroughTitle}</h4>
+          <div class="walkthrough-step">
+            <div><code>let score = 1;</code><p>${ui.lineOneExplain}</p></div>
+            <button type="button" class="walkthrough-button" id="run-line-one">${ui.runLineOne}</button>
+          </div>
+          <div class="walkthrough-step">
+            <div><code>score = score + 1;</code><p>${ui.lineTwoExplain}</p></div>
+            <button type="button" class="walkthrough-button" id="run-line-two" disabled>${ui.runLineTwo}</button>
+          </div>
+          <div class="walkthrough-result"><span>${ui.scoreLabel}</span><strong id="demo-score">—</strong></div>
+          <span class="walkthrough-status" id="walkthrough-status" role="status">${ui.startWalkthrough}</span>
+        </section>` : ""}
+        ${lesson.id === "python" ? `<section class="walkthrough-box" aria-labelledby="script-walkthrough-title">
+          <h4 id="script-walkthrough-title">${ui.scriptWalkthroughTitle}</h4>
+          <p class="walkthrough-status">${ui.scriptFileExplain} <code>hello.py</code></p>
+          <div class="walkthrough-step">
+            <div><code>print("Hello, Himesh!")</code><p>${ui.scriptLineOneExplain}</p></div>
+            <button type="button" class="walkthrough-button" id="script-line-one">${ui.runLineOne}</button>
+          </div>
+          <div class="walkthrough-step">
+            <div><code>print("I am learning Python.")</code><p>${ui.scriptLineTwoExplain}</p></div>
+            <button type="button" class="walkthrough-button" id="script-line-two" disabled>${ui.runLineTwo}</button>
+          </div>
+          <div class="walkthrough-result script-output"><span>${ui.scriptOutputTitle}</span><pre id="script-output" aria-live="polite"></pre></div>
+          <span class="walkthrough-status" id="script-status" role="status">${ui.scriptOutputStart}</span>
+        </section>` : ""}
+        <section class="practice-box" aria-labelledby="practice-title">
+          <div class="practice-top"><span class="practice-title" id="practice-title">${ui.practiceTitle}</span><span class="practice-xp">${practiceComplete ? "✅" : ui.practiceXp}</span></div>
+          <label for="practice-input">${practiceText.prompt}</label>
+          <textarea id="practice-input" placeholder="${escapeHtml(practiceText.placeholder)}"></textarea>
+          <div class="practice-bottom">
+            <button type="button" class="practice-check" id="practice-check">${ui.practiceCheck}</button>
+            <span class="practice-feedback" id="practice-feedback" role="status">${practiceComplete ? `${practiceText.success}${ui.practiceEarned}` : ""}</span>
+          </div>
+        </section>
+        <div class="notes-box">
+          <label for="lesson-notes">${ui.notesTitle}</label>
+          <textarea id="lesson-notes" placeholder="${ui.notesPlaceholder}"></textarea>
+          <span class="notes-status" id="notes-status"></span>
+        </div>
+        <section class="challenge" aria-labelledby="challenge-title">
+          <div class="challenge-kicker">${ui.challengeTitle}</div>
+          <h4 id="challenge-title">${text.question}</h4>
+          <div class="answers">${text.answers.map((answer, index) => `
+            <button type="button" class="answer" data-answer="${index}" ${answeredCorrectly ? "disabled" : ""}>
+              <span class="answer-letter">${String.fromCharCode(65 + index)}</span><span>${answer}</span>
+            </button>`).join("")}
+          </div>
+          <div class="feedback" id="feedback" role="status">${complete ? ui.challengeDone : ""}</div>
+          <div class="lesson-footer">
+            <span class="small-hint">${ui.smallHint}</span>
+            <button type="button" class="next-button" id="next-button" ${complete ? "" : "disabled"}>${complete ? ui.nextLesson : ui.finishChallenge}</button>
+          </div>
+        </section>`;
+
+      const practiceInput = document.getElementById("practice-input");
+      const notesInput = document.getElementById("lesson-notes");
+      practiceInput.value = typeof saved.practiceDrafts[lesson.id] === "string" ? saved.practiceDrafts[lesson.id] : "";
+      notesInput.value = typeof saved.notes[lesson.id] === "string" ? saved.notes[lesson.id] : "";
+      const typingInput = document.getElementById("typing-input");
+      if (typingInput) {
+        typingInput.addEventListener("input", () => {
+          const target = "hello";
+          const typed = typingInput.value.toLowerCase();
+          let matched = 0;
+          while (matched < typed.length && matched < target.length && typed[matched] === target[matched]) matched += 1;
+          document.getElementById("typing-remaining").textContent = target.slice(matched);
+          const status = document.getElementById("typing-status");
+          if (matched === target.length) status.textContent = ui.typingDone;
+          else if (matched < typed.length) status.textContent = `${ui.typingNext}${target[matched]}`;
+          else if (matched > 0) status.textContent = `${ui.typingCorrect}${target[matched]}`;
+          else status.textContent = ui.typingReady;
+        });
+      }
+      const runLineOne = document.getElementById("run-line-one");
+      if (runLineOne) {
+        let score = null;
+        const scoreOutput = document.getElementById("demo-score");
+        const walkthroughStatus = document.getElementById("walkthrough-status");
+        runLineOne.addEventListener("click", () => {
+          score = 1;
+          scoreOutput.textContent = score;
+          document.getElementById("run-line-two").disabled = false;
+          walkthroughStatus.textContent = ui.lineOneDone;
+        });
+        document.getElementById("run-line-two").addEventListener("click", () => {
+          if (score === null) return;
+          score = score + 1;
+          scoreOutput.textContent = score;
+          walkthroughStatus.textContent = ui.lineTwoDone;
+        });
+      }
+      const scriptLineOne = document.getElementById("script-line-one");
+      if (scriptLineOne) {
+        const output = document.getElementById("script-output");
+        const status = document.getElementById("script-status");
+        scriptLineOne.addEventListener("click", () => {
+          output.textContent = "Hello, Himesh!";
+          document.getElementById("script-line-two").disabled = false;
+          status.textContent = ui.scriptLineOneDone;
+        });
+        document.getElementById("script-line-two").addEventListener("click", () => {
+          if (!output.textContent) return;
+          output.textContent += "\nI am learning Python.";
+          status.textContent = ui.scriptLineTwoDone;
+        });
+      }
+      notesInput.addEventListener("input", () => {
+        saved.notes[lesson.id] = notesInput.value;
+        const didSave = saveProgress();
+        document.getElementById("notes-status").textContent = didSave ? ui.notesSaved : ui.practiceStorageError;
+      });
+      practiceInput.addEventListener("input", () => {
+        saved.practiceDrafts[lesson.id] = practiceInput.value;
+        saveProgress();
+        document.getElementById("practice-feedback").textContent = "";
+        document.getElementById("practice-feedback").className = "practice-feedback";
+      });
+      document.getElementById("practice-check").addEventListener("click", checkPractice);
+      document.querySelectorAll(".answer").forEach((button) => {
+        if (complete) {
+          if (Number(button.dataset.answer) === lesson.correct) button.classList.add("correct");
+          return;
+        }
+        button.addEventListener("click", () => checkAnswer(Number(button.dataset.answer)));
+      });
+      document.getElementById("next-button").addEventListener("click", nextLesson);
+      renderNextList();
+    }
+
+    function isPracticeCorrect(kind, value) {
+      const answer = value.trim();
+      const compact = answer.replace(/\s+/g, "").toLowerCase();
+      switch (kind) {
+        case "steps":
+          return answer.split(/\r?\n/).filter((line) => line.trim()).length >= 2;
+        case "html":
+          return /^<p>hello,?\s*himesh!?<\/p>$/i.test(answer.replace(/\s+/g, " ").trim());
+        case "css":
+          return compact.includes("color:green;");
+        case "number":
+          return answer === "4";
+        case "debug":
+          return /^letmessage=["']hi!["'];?$/i.test(compact);
+        case "condition":
+          return /if\s*\(\s*score\s*>\s*10\s*\)/i.test(answer);
+        case "function-call":
+          return /^greet\(\);?$/i.test(compact);
+        case "python-print":
+          return /^print\(["']hi!["']\)$/i.test(compact);
+        case "array":
+          return answer.toLowerCase() === "blue";
+        case "git-commit":
+          return answer.toLowerCase() === "commit";
+        case "database":
+          return answer.toLowerCase() === "students";
+        case "request-response": {
+          const requestIndex = answer.toLowerCase().indexOf("request");
+          const responseIndex = answer.toLowerCase().indexOf("response");
+          return requestIndex >= 0 && responseIndex > requestIndex;
+        }
+        case "router":
+          return /\brouter\b/i.test(answer);
+        case "authorization":
+          return /\b(lab|own)\b/i.test(answer) && /\bpermission\b/i.test(answer);
+        case "defense":
+          return ["password", "updates", "wpa2", "wpa3", "guest"].filter((term) => answer.toLowerCase().includes(term)).length >= 2;
+        case "space-prompt":
+          return /\bspace\b/i.test(answer) && /\b(simple|easy|beginner)\b/i.test(answer);
+        case "dinner-prompt":
+          return /\bdinner\b/i.test(answer) && /\b(easy|simple)\b/i.test(answer)
+            && /\b(ingredients|rice|egg|eggs|potato|bread|dal|paneer|pasta|beans|tomato)\b/i.test(answer);
+        default:
+          return false;
+      }
+    }
+
+    function checkPractice() {
+      const lesson = lessons.find((item) => item.id === currentId);
+      const practiceText = getPracticeCopy(lesson);
+      const feedback = document.getElementById("practice-feedback");
+      if (!isPracticeCorrect(lesson.practice.kind, document.getElementById("practice-input").value)) {
+        feedback.textContent = practiceText.hint;
+        feedback.className = "practice-feedback wrong";
+        return;
+      }
+      const alreadyEarned = saved.practiceCompleted.includes(lesson.id);
+      if (!alreadyEarned) {
+        saved.practiceCompleted.push(lesson.id);
+        saved.xp += 5;
+        saveProgress();
+        renderStats();
+      }
+      feedback.textContent = practiceText.success + (alreadyEarned ? uiText[language].practiceAlreadyEarned : uiText[language].practiceEarned);
+      feedback.className = "practice-feedback";
+      document.querySelector(".practice-xp").textContent = "✅";
+    }
+
+    function checkAnswer(index) {
+      if (answeredCorrectly) return;
+      const lesson = lessons.find((item) => item.id === currentId);
+      const text = getLessonCopy(lesson);
+      const ui = uiText[language];
+      const feedback = document.getElementById("feedback");
+      if (index === lesson.correct) {
+        answeredCorrectly = true;
+        saved.completed.push(lesson.id);
+        saved.xp += 20;
+        document.querySelectorAll(".answer").forEach((button) => {
+          button.disabled = true;
+          if (Number(button.dataset.answer) === index) button.classList.add("correct");
+        });
+        feedback.innerHTML = text.explain;
+        document.getElementById("next-button").disabled = false;
+        document.getElementById("next-button").textContent = ui.nextLesson;
+        saveProgress();
+        renderStats();
+        renderNextList();
+      } else {
+        const button = document.querySelector(`.answer[data-answer="${index}"]`);
+        button.classList.add("incorrect");
+        feedback.className = "feedback wrong";
+        feedback.textContent = `${ui.tryAgain} ${ui.hintPrefix}${quizHints[lesson.id][language]}`;
+      }
+    }
+
+    function nextLesson() {
+      const visible = getVisibleLessons();
+      const position = visible.findIndex((lesson) => lesson.id === currentId);
+      const next = visible.slice(position + 1).find((lesson) => !saved.completed.includes(lesson.id))
+        || lessons.find((lesson) => !saved.completed.includes(lesson.id));
+      if (!next) return;
+      selectLesson(next.id, activeLevel === "all");
+    }
+
+    function selectLesson(id, keepCurrentLevel = false) {
+      const selectedLesson = lessons.find((lesson) => lesson.id === id);
+      if (!selectedLesson || !isLevelUnlocked(selectedLesson.level)) return;
+      currentId = id;
+      if (!keepCurrentLevel) activeLevel = selectedLesson.level;
+      updateLevelButtons();
+      answeredCorrectly = saved.completed.includes(id);
+      renderStats();
+      renderLesson();
+      if (window.innerWidth <= 650) document.getElementById("lesson-card").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function renderNextList() {
+      const visible = getVisibleLessons();
+      const ui = uiText[language];
+      updateLevelButtons();
+      const listTitle = activeLevel === "all" ? ui.allTitle : ui[`${activeLevel}Title`];
+      const lessonCount = visible.length === 1 ? ui.lessonCountOne : ui.lessonCountMany;
+      document.getElementById("next-steps-title").textContent = `🗺️ ${listTitle} · ${visible.length} ${lessonCount}`;
+      document.getElementById("next-list").innerHTML = visible.map((lesson) => `
+        <button type="button" class="next-lesson ${currentId === lesson.id ? "active" : ""}" data-lesson="${lesson.id}">
+          <span class="tiny-icon">${saved.completed.includes(lesson.id) ? "✅" : lesson.icon}</span>
+          <span><strong>${getLessonCopy(lesson).title}</strong><small>${saved.completed.includes(lesson.id) ? ui.completed : ui.lessonShort}</small></span>
+        </button>`).join("");
+      document.querySelectorAll(".next-lesson").forEach((button) => {
+        button.addEventListener("click", () => selectLesson(button.dataset.lesson));
+      });
+    }
+
+    function renderStats() {
+      const completed = saved.completed.length;
+      const percent = Math.round(completed / lessons.length * 100);
+      const ui = uiText[language];
+      const nextLessonInPath = lessons.find((lesson) => !saved.completed.includes(lesson.id));
+      const learningLevel = nextLessonInPath ? nextLessonInPath.level : "expert";
+      const levelName = {
+        zero: ui.levelNameZero,
+        beginner: ui.levelNameBeginner,
+        intermediate: ui.levelNameIntermediate,
+        expert: ui.levelNameExpert
+      }[learningLevel];
+      const selectedLevelTitle = activeLevel === "all" ? ui.allTitle : ui[`${activeLevel}Title`];
+      const selectedLevelDescription = activeLevel === "all" ? ui.allDescription : ui[`${activeLevel}Description`];
+      document.getElementById("top-xp").textContent = `${saved.xp} XP`;
+      document.getElementById("xp-count").textContent = saved.xp;
+      document.getElementById("lesson-count").textContent = `${completed} / ${lessons.length}`;
+      document.getElementById("level-name").textContent = levelName;
+      document.getElementById("side-progress").textContent = `${percent}%`;
+      document.getElementById("side-fill").style.width = `${percent}%`;
+      document.getElementById("side-bar").setAttribute("aria-valuenow", percent);
+      document.getElementById("side-note").textContent = completed === lessons.length
+        ? ui.allDone
+        : `${lessons.length - completed} ${lessons.length - completed === 1 ? ui.oneStep : ui.manySteps}`;
+      document.getElementById("section-title").textContent = completed === lessons.length ? ui.sectionDone : selectedLevelTitle;
+      document.getElementById("section-description").textContent = selectedLevelDescription;
+    }
+
+    document.querySelectorAll(".path-button").forEach((button) => {
+      button.addEventListener("click", () => {
+        activeLevel = button.dataset.level;
+        updateLevelButtons();
+        const next = getVisibleLessons().find((lesson) => !saved.completed.includes(lesson.id)) || getVisibleLessons()[0];
+        selectLesson(next.id, true);
+      });
+    });
+
+    document.getElementById("reset-progress").addEventListener("click", () => {
+      if (!window.confirm(uiText[language].resetConfirm)) return;
+      saved.completed.length = 0;
+      saved.practiceCompleted.length = 0;
+      saved.practiceDrafts = {};
+      saved.xp = 0;
+      currentId = lessons[0].id;
+      activeLevel = "zero";
+      updateLevelButtons();
+      answeredCorrectly = false;
+      saveProgress();
+      renderStats();
+      renderLesson();
+    });
+
+    const languageToggle = document.getElementById("language-toggle");
+
+    function updateLanguage() {
+      const ui = uiText[language];
+      document.documentElement.lang = language === "en" ? "en" : "hi-Latn";
+      document.getElementById("paths-heading").textContent = ui.paths;
+      document.getElementById("unlock-note").textContent = ui.unlockNote;
+      document.querySelector('[data-level="all"] .path-label').textContent = ui.allLevels;
+      document.querySelector('[data-level="zero"] .path-label').textContent = ui.zeroLevel;
+      document.querySelector('[data-level="beginner"] .path-label').textContent = ui.beginnerLevel;
+      document.querySelector('[data-level="intermediate"] .path-label').textContent = ui.intermediateLevel;
+      document.querySelector('[data-level="expert"] .path-label').textContent = ui.expertLevel;
+      document.getElementById("progress-label").textContent = ui.progress;
+      document.getElementById("side-bar").setAttribute("aria-label", ui.courseProgress);
+      document.getElementById("welcome-eyebrow").textContent = ui.welcomeEyebrow;
+      document.getElementById("welcome-title").textContent = ui.welcomeTitle;
+      document.getElementById("welcome-description").textContent = ui.welcomeDescription;
+      document.getElementById("stats-section").setAttribute("aria-label", language === "en" ? "Your learning stats" : "Seekhne ke stats");
+      document.getElementById("xp-label").textContent = ui.xpEarned;
+      document.getElementById("lessons-label").textContent = ui.lessonsDone;
+      document.getElementById("level-label").textContent = ui.yourLevel;
+      document.getElementById("section-description").textContent = ui.sectionDescription;
+      document.getElementById("reset-progress").textContent = ui.resetProgress;
+      document.getElementById("next-steps-title").textContent = `🗺️ ${ui.nextSteps}`;
+      document.getElementById("tip-title").innerHTML = `<span aria-hidden="true">💡</span> ${ui.tipTitle}`;
+      document.getElementById("tip-description").textContent = ui.tipDescription;
+      document.getElementById("bottom-note").textContent = ui.bottomNote;
+      updateLevelButtons();
+      languageToggle.querySelector(".language-label").textContent = ui.switchLanguage;
+      languageToggle.setAttribute("aria-label", ui.languageLabel);
+      languageToggle.title = ui.languageLabel;
+      languageToggle.dataset.short = language === "hinglish" ? "EN" : "HI";
+      updateFullscreenButton();
+    }
+
+    languageToggle.addEventListener("click", () => {
+      language = language === "hinglish" ? "en" : "hinglish";
+      try {
+        localStorage.setItem("codeQuestLanguage", language);
+      } catch {
+        document.getElementById("fullscreen-status").textContent = uiText[language].storageError;
+      }
+      updateLanguage();
+      renderStats();
+      renderLesson();
+    });
+
+    const fullscreenToggle = document.getElementById("fullscreen-toggle");
+    const fullscreenStatus = document.getElementById("fullscreen-status");
+
+    function updateFullscreenButton() {
+      const isFullscreen = Boolean(document.fullscreenElement);
+      const ui = uiText[language];
+      fullscreenToggle.setAttribute("aria-label", isFullscreen ? "Exit full screen" : "View full screen");
+      fullscreenToggle.title = isFullscreen ? ui.exitFullScreenHelp : ui.fullScreenHelp;
+      fullscreenToggle.querySelector(".fullscreen-label").textContent = isFullscreen ? ui.exitFullScreen : ui.fullScreen;
+    }
+
+    fullscreenToggle.addEventListener("click", async () => {
+      fullscreenStatus.textContent = "";
+      try {
+        if (document.fullscreenElement) {
+          await document.exitFullscreen();
+        } else if (document.documentElement.requestFullscreen) {
+          await document.documentElement.requestFullscreen();
+        } else {
+          fullscreenStatus.textContent = uiText[language].fullScreenBlocked;
+        }
+      } catch {
+        fullscreenStatus.textContent = uiText[language].fullScreenBlocked;
+      }
+    });
+
+    document.addEventListener("fullscreenchange", updateFullscreenButton);
+    languageToggle.addEventListener("click", () => {
+      document.getElementById("fullscreen-status").textContent = "";
+    });
+    updateLanguage();
+    updateFullscreenButton();
+    renderStats();
+    renderLesson();
+  </script>
+</body>
+</html>
